@@ -1,0 +1,32 @@
+State space
+space of all partial and complete lists of cities
+these should be stored as
+
+Initial State 
+the empty list
+
+Goal States
+any list of length n
+
+Rules for representing actions and transitions
+from any state, the only permissible action is to visit a new city
+the transition is therefore adding a city to the list representing the partial tour
+the new city does not necessarily need to be at the end of the list.
+
+A proper notion of cost (with A as a parameter)
+from x to x' where x is the empty list: 0
+from x to x' where the new city, new, is inserted between cities p and q: A - distMatrix[p][q] + distMatrix[p][new] + distMatrix[new][q]
+from x to x' where the new city is inserted at the beginning/end: A + distMatrix[new][0] (same as A + distMatrix[n-1][new])
+from x to x' where the state x' is a goal state: A + distMatrix[new][0] + distMatrix[0][n-1]
+
+SEARCH STRATEGY
+AlgA: Iterative deepening A*
+AlgB: Particle Swarm Optimization
+
+
+
+
+
+
+as a rough guide should this look like a fairly simple document without too many classes or functions?
+so its mostly in-line
