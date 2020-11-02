@@ -274,8 +274,59 @@ added_note = ""
 ############ NOW YOUR CODE SHOULD BEGIN.
 ############
 
+
+
+
+
+
+
 # tour should contain a list of integers from 0 to n-1 representing the order the cities should be visited
 tour = []
+
+print(len(dist_matrix))
+print(num_cities)
+
+def h(partialTour):
+    '''returns the heuristic cost of a partial tour'''
+    if len(partialTour) == num_cities:
+        return 0
+    else:
+        # calculate the heuristic cost
+        return 10
+
+def aStarSearch(dist_matrix):
+    '''searches the tree for a goal node'''
+
+    # initialise the tree with the initial state
+    tour = []
+    # adds the empty tour to the fringe
+    fringe = []
+
+    while True:
+        # if there are no candidates for expansion return failed
+        if len(fringe) == 0:
+            return "Failed"
+        # choose a leaf node to expand according to strategy
+        for i in range(num_cities):
+            # find f(z) for city i
+            # g(i) is the step cost to the node, h(i) is the heuristic
+            fi = g(i) + h(i)
+        leafToExpand = min(fArray)
+        
+        # if the leaf is a goal node return the solution
+        if len(tour) == num_cities:
+            return tour
+        else:
+            #expand the node and add the resulting nodes to the search tree
+            pass
+
+
+
+
+# expect to add cities to the end of the tour but could switch to insert them 
+
+
+
 
 
 
