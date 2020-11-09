@@ -280,6 +280,14 @@ added_note = "This is just the numbers in order to see what happens"
 import random
 
 # HELPFUL FUNCTIONS
+def tourLength(tour):
+    '''finds the length of a tour'''
+    tour_length = 0
+    for i in range(0, num_cities - 1):
+        tour_length = tour_length + dist_matrix[tour[i]][tour[i + 1]]
+    tour_length = tour_length + dist_matrix[tour[num_cities - 1]][tour[0]]
+    return tour_length
+    
 def newTour(num_cities):
     '''creates a random tour of length num_cities'''
     tour = []
@@ -288,17 +296,9 @@ def newTour(num_cities):
     random.shuffle(tour)
     return tour
 
-def len_tour(tour):
-    '''finds the length of a tour'''
-    tour_length = 0
-    for i in range(0, num_cities - 1):
-        tour_length = tour_length + dist_matrix[tour[i]][tour[i + 1]]
-    tour_length = tour_length + dist_matrix[tour[num_cities - 1]][tour[0]]
-    return tour_length
-
 def reproduce(parentX, parentY):
     '''makes a child from parentX and parentY'''
-    # ELIMINATE DUPLICATES
+    # TODO ELIMINATE DUPLICATES
     partition = random.randint(0,num_cities)
     partFromX = parentX[0:partition]
     partFromY = parentY[partition:num_cities]
@@ -307,21 +307,21 @@ def reproduce(parentX, parentY):
 
 def mutateChild(child, pMutation):
     '''if a random float is lesser than the threshold mutate the child'''
+    # TODO MUTATE THE CHILD
     if random.random() <= pMutation:
         child = child
-    return child
+        return child
+    else:
+        return child
 
 def fitness(tour):
     '''returns the fitness of a tour'''
-    return len_tour(tour)
+    # TODO DEFINE THE FITNESS OF A TOUR
+    # honestly the length is an ok fitness
+    return tourLength(tour)
 
 
 # GENETIC ALGORITHM
-# parameters
-populationSize = 10
-pMutation = 0.1
-fitnessThreshold = fitness(newTour) * 2
-
 def genetic(populationSize, pMutation, fitnessThreshold):
     population = []
     for i in range(populationSize):
@@ -330,18 +330,23 @@ def genetic(populationSize, pMutation, fitnessThreshold):
     while True:
         newPopulation = []
         for i in range(1, populationSize):
-            parentX = population[random.randint(0,num_cities)]
-            parentY = population[random.randint(0,num_cities)]
+            parentX = random.choice(population)
+            parentY = random.choice(population)
             child = reproduce(parentX, parentY)
             child = mutateChild(child, pMutation)
             newPopulation.append(child)
-            if fitness(child) >= fitnessThreshold:
+            if fitness(child) <= fitnessThreshold:
                 return child
         population = newPopulation
 
-
+# parameters
+populationSize = 10
+pMutation = 0.1
+tour = newTour(num_cities)
+fitnessThreshold = fitness(tour) * 2
+# generate the tour and find its length
 tour = genetic(populationSize, pMutation, fitnessThreshold)
-tour_length = len_tour(tour)
+tour_length = tourLength(tour)
 
 
 
