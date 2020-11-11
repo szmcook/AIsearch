@@ -316,8 +316,8 @@ def mutateChild(child, pMutation):
     '''if a random float is lesser than the threshold mutate the child'''
     if random.random() <= pMutation:
         # pick two indices
-        i = random.randint(0, num_cities)
-        j = random.randint(0, num_cities)
+        i = random.randint(0, num_cities-1)
+        j = random.randint(0, num_cities-1)
         # swap the elements in those indices
         child[i], child[j] = child[j], child[i]
         return child
@@ -335,7 +335,7 @@ def chooseParent(population):
         i = maxLength - i
     # pick one
     parent = random.choices(population=population, weights=fitnesses)
-    return parent
+    return parent[0]
     
 
 # GENETIC ALGORITHM
@@ -344,24 +344,44 @@ def genetic(populationSize, pMutation, fitnessThreshold):
     for i in range(populationSize):
         population.append(newTour(num_cities))
 
+    from datetime import datetime, timedelta
+    start = datetime.now()
+
     while True:
+        '''# keep the best one from the population
+        bestOne = population[0]
+        for i in population:
+            if tourLength(i) < tourLength(bestOne):
+                bestOne = i
+                print(tourLength(i))
+        newPopulation = [bestOne]'''
         newPopulation = []
+
         for i in range(1, populationSize):
+            #choose parents and breed a child
             parentX = chooseParent(population)
             parentY = chooseParent(population)
             child = reproduce(parentX, parentY)
             child = mutateChild(child, pMutation)
             newPopulation.append(child)
+            # terminate if taking too long
+            if (datetime.now() - start > timedelta(seconds=50)):
+                print("exiting after 50 seconds and returning the minimum from the population")
+                return min(population)
+            # terminate if threshold reached
             if tourLength(child) <= fitnessThreshold:
                 return child
         population = newPopulation
+        #print(f'size of the population is: {len(population)}')
 
 # parameters
 populationSize = 10
 pMutation = 0.1
 tour = newTour(num_cities)
-fitnessThreshold = tourLength(tour) * 2
+fitnessThreshold = tourLength(tour)//2
+fitnessThreshold = 90
 # generate the tour and find its length
+print(f'fitness threshold is {fitnessThreshold}')
 tour = genetic(populationSize, pMutation, fitnessThreshold)
 tour_length = tourLength(tour)
 
