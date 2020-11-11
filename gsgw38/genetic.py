@@ -249,7 +249,7 @@ my_last_name = "Cook"
 ############ 'alg_codes_and_tariffs.txt' (READ THIS FILE TO SEE THE CODES).
 ############
 
-algorithm_code = "SA"
+algorithm_code = "GA"
 
 ############
 ############ DO NOT TOUCH OR ALTER THE CODE BELOW! YOU HAVE BEEN WARNED!
@@ -298,28 +298,45 @@ def newTour(num_cities):
 
 def reproduce(parentX, parentY):
     '''makes a child from parentX and parentY'''
-    # TODO ELIMINATE DUPLICATES
     partition = random.randint(0,num_cities)
     partFromX = parentX[0:partition]
     partFromY = parentY[partition:num_cities]
     child = partFromX + partFromY
+    # eliminate duplicates
+    for i in range(partition, len(child)):
+        if child[i] in child[:i]:
+            # duplicate found
+            # swap it out
+            for sub in parentY:
+                if sub not in child:
+                    child[i] = sub
     return child
 
 def mutateChild(child, pMutation):
     '''if a random float is lesser than the threshold mutate the child'''
-    # TODO MUTATE THE CHILD
     if random.random() <= pMutation:
-        child = child
+        # pick two indices
+        i = random.randint(0, num_cities)
+        j = random.randint(0, num_cities)
+        # swap the elements in those indices
+        child[i], child[j] = child[j], child[i]
         return child
     else:
         return child
 
-def fitness(tour):
-    '''returns the fitness of a tour'''
-    # TODO DEFINE THE FITNESS OF A TOUR
-    # honestly the length is an ok fitness
-    return tourLength(tour)
-
+def chooseParent(population):
+    # store all the fitnesses in an array
+    fitnesses = []
+    for tour in population:
+        fitnesses.append(tourLength(tour))
+    # we wish to minimise these
+    maxLength = max(fitnesses)
+    for i in fitnesses:
+        i = maxLength - i
+    # pick one
+    parent = random.choices(population=population, weights=fitnesses)
+    return parent
+    
 
 # GENETIC ALGORITHM
 def genetic(populationSize, pMutation, fitnessThreshold):
@@ -330,12 +347,12 @@ def genetic(populationSize, pMutation, fitnessThreshold):
     while True:
         newPopulation = []
         for i in range(1, populationSize):
-            parentX = random.choice(population)
-            parentY = random.choice(population)
+            parentX = chooseParent(population)
+            parentY = chooseParent(population)
             child = reproduce(parentX, parentY)
             child = mutateChild(child, pMutation)
             newPopulation.append(child)
-            if fitness(child) <= fitnessThreshold:
+            if tourLength(child) <= fitnessThreshold:
                 return child
         population = newPopulation
 
@@ -343,7 +360,7 @@ def genetic(populationSize, pMutation, fitnessThreshold):
 populationSize = 10
 pMutation = 0.1
 tour = newTour(num_cities)
-fitnessThreshold = fitness(tour) * 2
+fitnessThreshold = tourLength(tour) * 2
 # generate the tour and find its length
 tour = genetic(populationSize, pMutation, fitnessThreshold)
 tour_length = tourLength(tour)
