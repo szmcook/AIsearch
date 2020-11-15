@@ -298,6 +298,7 @@ def newTour(num_cities):
 
 def reproduce(parentX, parentY):
     '''makes a child from parentX and parentY'''
+    # TODO try and make this faster
     partition = random.randint(0,num_cities)
     partFromX = parentX[0:partition]
     partFromY = parentY[partition:num_cities]
@@ -339,14 +340,15 @@ def mutateChild2(child, pMutation):
         return child
 
 def chooseParent(population):
+    '''given a population this function picks a parent based on its fitness'''
     # store all the fitnesses in an array
     fitnesses = []
     for tour in population:
         fitnesses.append(tourLength(tour))
     # we wish to minimise these
     maxLength = max(fitnesses)
-    for i in fitnesses:
-        i = maxLength - i
+    for i in range(len(fitnesses)):
+        fitnesses[i] = maxLength - fitnesses[i]
     # pick one
     parent = random.choices(population=population, weights=fitnesses)
     return parent[0]
@@ -363,23 +365,22 @@ def genetic(populationSize, pMutation, fitnessThreshold):
 
     while True:
         # TODO track the best one from the population and put it inthe new population
-        '''# keep the best one from the population
+        # keep the best one from the population
         bestOne = population[0]
         for i in population:
             if tourLength(i) < tourLength(bestOne):
                 bestOne = i
                 print(tourLength(i))
-        newPopulation = [bestOne]'''
-        newPopulation = []
+        newPopulation = [bestOne]
+        # newPopulation = []
 
-        for _ in range(1, populationSize):
+        for _ in range(0, populationSize):
             #choose parents and breed a child
             parentX = chooseParent(population)
             parentY = chooseParent(population)
             child = reproduce(parentX, parentY)
             child = mutateChild(child, pMutation)
             newPopulation.append(child)
-            print(tourLength(child))
             # terminate if taking too long
             if (datetime.now() - start > timedelta(seconds=50)):
                 print("exiting after 50 seconds and returning the minimum from the population")
@@ -391,11 +392,11 @@ def genetic(populationSize, pMutation, fitnessThreshold):
         #print(f'size of the population is: {len(population)}')
 
 # parameters
-populationSize = 50
+populationSize = 12
 pMutation = 0.05
 tour = newTour(num_cities)
 fitnessThreshold = tourLength(tour)//2
-fitnessThreshold = 120
+fitnessThreshold = 50
 # generate the tour and find its length
 print(f'fitness threshold is {fitnessThreshold}')
 tour = genetic(populationSize, pMutation, fitnessThreshold)
