@@ -74,25 +74,25 @@ def build_distance_matrix(num_cities, distances, city_format):
     if city_format == "full":
         for j in range(num_cities):
             row = []
-            for k in range(0, num_cities):
+            for _ in range(0, num_cities):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     elif city_format == "upper_tri":
         for j in range(0, num_cities):
             row = []
-            for k in range(j):
+            for _ in range(j):
                 row.append(0)
-            for k in range(num_cities - j):
+            for _ in range(num_cities - j):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     else:
         for j in range(0, num_cities):
             row = []
-            for k in range(j + 1):
+            for _ in range(j + 1):
                 row.append(0)
-            for k in range(0, num_cities - (j + 1)):
+            for _ in range(0, num_cities - (j + 1)):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)

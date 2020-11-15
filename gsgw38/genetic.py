@@ -74,25 +74,25 @@ def build_distance_matrix(num_cities, distances, city_format):
     if city_format == "full":
         for j in range(num_cities):
             row = []
-            for k in range(0, num_cities):
+            for _ in range(0, num_cities):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     elif city_format == "upper_tri":
         for j in range(0, num_cities):
             row = []
-            for k in range(j):
+            for _ in range(j):
                 row.append(0)
-            for k in range(num_cities - j):
+            for _ in range(num_cities - j):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     else:
         for j in range(0, num_cities):
             row = []
-            for k in range(j + 1):
+            for _ in range(j + 1):
                 row.append(0)
-            for k in range(0, num_cities - (j + 1)):
+            for _ in range(0, num_cities - (j + 1)):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
@@ -277,7 +277,7 @@ added_note = "This is just the numbers in order to see what happens"
 # tour should contain a list of integers from 0 to n-1 representing the order the cities should be visited
 
 # IMPORTS
-import random
+import random # this is imported at the top and is probably unnecessary
 
 # HELPFUL FUNCTIONS
 def tourLength(tour):
@@ -313,13 +313,27 @@ def reproduce(parentX, parentY):
     return child
 
 def mutateChild(child, pMutation):
-    '''if a random float is lesser than the threshold mutate the child'''
+    '''if a random float is lesser than the threshold swap two nodes in the child'''
     if random.random() <= pMutation:
         # pick two indices
         i = random.randint(0, num_cities-1)
         j = random.randint(0, num_cities-1)
         # swap the elements in those indices
         child[i], child[j] = child[j], child[i]
+        return child
+    else:
+        return child
+
+def mutateChild2(child, pMutation):
+    '''Mutates the child by reversing a portion of the tour'''
+    if random.random() <= pMutation:
+        i = random.randint(0, num_cities-1)
+        j = random.randint(0, num_cities-1)
+        if i > j:
+            i, j = j, i
+        subTour = child[i:j]
+        subTour.reverse()
+        child[i:j] = subTour
         return child
     else:
         return child
@@ -341,13 +355,14 @@ def chooseParent(population):
 # GENETIC ALGORITHM
 def genetic(populationSize, pMutation, fitnessThreshold):
     population = []
-    for i in range(populationSize):
+    for _ in range(populationSize):
         population.append(newTour(num_cities))
 
     from datetime import datetime, timedelta
     start = datetime.now()
 
     while True:
+        # TODO track the best one from the population and put it inthe new population
         '''# keep the best one from the population
         bestOne = population[0]
         for i in population:
@@ -357,13 +372,14 @@ def genetic(populationSize, pMutation, fitnessThreshold):
         newPopulation = [bestOne]'''
         newPopulation = []
 
-        for i in range(1, populationSize):
+        for _ in range(1, populationSize):
             #choose parents and breed a child
             parentX = chooseParent(population)
             parentY = chooseParent(population)
             child = reproduce(parentX, parentY)
             child = mutateChild(child, pMutation)
             newPopulation.append(child)
+            print(tourLength(child))
             # terminate if taking too long
             if (datetime.now() - start > timedelta(seconds=50)):
                 print("exiting after 50 seconds and returning the minimum from the population")
@@ -375,11 +391,11 @@ def genetic(populationSize, pMutation, fitnessThreshold):
         #print(f'size of the population is: {len(population)}')
 
 # parameters
-populationSize = 10
-pMutation = 0.1
+populationSize = 50
+pMutation = 0.05
 tour = newTour(num_cities)
 fitnessThreshold = tourLength(tour)//2
-fitnessThreshold = 90
+fitnessThreshold = 120
 # generate the tour and find its length
 print(f'fitness threshold is {fitnessThreshold}')
 tour = genetic(populationSize, pMutation, fitnessThreshold)
