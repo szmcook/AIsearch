@@ -268,7 +268,7 @@ print("   your algorithm code is legal and is " + algorithm_code + " -" + code_d
 ############ YOUR TOUR THAT YOU MIGHT BE INTERESTED IN LATER.
 ############
 
-added_note = "This is just the numbers in order to see what happens"
+added_note = "This is the result from the genetic algorithm with population 12 and mutation chance 0.05"
 
 ############
 ############ NOW YOUR CODE SHOULD BEGIN.
@@ -392,7 +392,7 @@ def genetic(populationSize, pMutation, fitnessThreshold):
         #print(f'size of the population is: {len(population)}')
 
 # parameters
-populationSize = 12
+populationSize = 100
 pMutation = 0.05
 tour = newTour(num_cities)
 fitnessThreshold = tourLength(tour)//2
