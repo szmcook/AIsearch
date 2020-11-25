@@ -1,0 +1,7 @@
+for genetic, the avoidance of local optima comes from the probability of mutation and the crossover definitions.
+
+To more reliably avoid local optima probability of mutation should be higher but this means it runs slower, perhaps it would be beneficial to base the probability on the num_cities?
+
+To enhance the algorithm I want to keep more than just the best tour, perhaps the best 10%?
+
+I'd also like to increase the probability of mutation as the shortest tour starts to change less frequency.

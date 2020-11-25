@@ -1,5 +1,0 @@
-USER = gsgw38 (Sam Cook),
-ALGORITHM CODE = GA, NAME OF CITY-FILE = AISearchfile017.txt,
-SIZE = 17, TOUR LENGTH = 1779,
-1,15,2,5,3,16,9,14,7,0,8,4,11,12,6,10,13,
-NOTE = This is just the numbers in order to see what happens
