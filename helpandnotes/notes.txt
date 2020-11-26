@@ -3,5 +3,6 @@ for genetic, the avoidance of local optima comes from the probability of mutatio
 To more reliably avoid local optima probability of mutation should be higher but this means it runs slower, perhaps it would be beneficial to base the probability on the num_cities?
 
 To enhance the algorithm I want to keep more than just the best tour, perhaps the best 10%?
+OR instead you can add the new generation of populationSize to the population and then only keep the top populationSize items
 
 I'd also like to increase the probability of mutation as the shortest tour starts to change less frequency.

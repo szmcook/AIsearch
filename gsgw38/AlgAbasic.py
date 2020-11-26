@@ -299,6 +299,7 @@ def newTour(num_cities):
 def reproduce(parentX, parentY):
     '''makes a child from parentX and parentY'''
     # TODO try and make this faster
+    # print(f'x is \n{parentX}\ny is \n{parentY}')
     partition = random.randint(0,num_cities)
     partFromX = parentX[0:partition]
     partFromY = parentY[partition:num_cities]
@@ -311,6 +312,21 @@ def reproduce(parentX, parentY):
             for sub in parentY:
                 if sub not in child:
                     child[i] = sub
+    # print(f'child is \n{child}')
+    return child
+
+def reproduce2(parentX, parentY):
+    '''makes a child from parentX and parentY'''
+    # TODO try and make this faster
+    print(f'x is \n{parentX}\ny is \n{parentY}')
+    partition = random.randint(0,num_cities)
+    partFromX = parentX[0:partition]
+    print(f'partFromX is {partFromX}')
+    for i in partFromX:
+        parentY.remove(i)
+    print(f'parentY has become {parentY}')
+    child = partFromX+parentY
+    print(f'child is \n{child}')
     return child
 
 def mutateChildOld(child, pMutation):
