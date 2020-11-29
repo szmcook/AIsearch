@@ -6,3 +6,13 @@ To enhance the algorithm I want to keep more than just the best tour, perhaps th
 OR instead you can add the new generation of populationSize to the population and then only keep the top populationSize items
 
 I'd also like to increase the probability of mutation as the shortest tour starts to change less frequency.
+
+
+
+
+ENHANCEMENTS
+
+mutation
+crossover
+add to the population and then take the top half
+make the probability of mutation a function of the time?

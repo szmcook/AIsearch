@@ -288,6 +288,7 @@ def tourLength(tour):
     tour_length = tour_length + dist_matrix[tour[num_cities - 1]][tour[0]]
     return tour_length
     
+
 def newTour(num_cities):
     '''creates a random tour of length num_cities'''
     tour = []
@@ -295,6 +296,7 @@ def newTour(num_cities):
         tour.append(i)
     random.shuffle(tour)
     return tour
+
 
 def reproduce(parentX, parentY):
     '''makes a child from parentX and parentY'''
@@ -315,31 +317,6 @@ def reproduce(parentX, parentY):
     # print(f'child is \n{child}')
     return child
 
-def reproduce2(parentX, parentY):
-    '''makes a child from parentX and parentY'''
-    # TODO try and make this faster
-    print(f'x is \n{parentX}\ny is \n{parentY}')
-    partition = random.randint(0,num_cities)
-    partFromX = parentX[0:partition]
-    print(f'partFromX is {partFromX}')
-    for i in partFromX:
-        parentY.remove(i)
-    print(f'parentY has become {parentY}')
-    child = partFromX+parentY
-    print(f'child is \n{child}')
-    return child
-
-def mutateChildOld(child, pMutation):
-    '''if a random float is lesser than the threshold swap two nodes in the child'''
-    if random.random() <= pMutation:
-        # pick two indices
-        i = random.randint(0, num_cities-1)
-        j = random.randint(0, num_cities-1)
-        # swap the elements in those indices
-        child[i], child[j] = child[j], child[i]
-        return child
-    else:
-        return child
 
 def mutateChild(child, pMutation):
     '''Mutates the child by reversing a portion of the tour'''
@@ -354,6 +331,7 @@ def mutateChild(child, pMutation):
         return child
     else:
         return child
+
 
 def chooseParent(population):
     '''given a population this function picks a parent based on its fitness'''
@@ -380,7 +358,6 @@ def genetic(populationSize, pMutation):
     start = datetime.now()
 
     while True:
-        # TODO track the best one from the population and put it inthe new population
         # keep the best one from the population
         bestOne = population[0]
         for i in population:
@@ -411,7 +388,6 @@ pMutation = 0.1
 tour = genetic(populationSize, pMutation)
 tour_length = tourLength(tour)
 added_note = f"This is the result from the genetic algorithm with population {populationSize} and mutation chance {pMutation}"
-
 
 
 
