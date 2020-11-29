@@ -368,7 +368,7 @@ def chooseParent(population):
     for tour in population:
         fitnesses.append(tourLength(tour))
     # we wish to minimise these
-    maxLength = 2*max(fitnesses)
+    maxLength = max(fitnesses)
     for i in range(len(fitnesses)):
         fitnesses[i] = maxLength - fitnesses[i]
     # pick one
@@ -421,7 +421,7 @@ def genetic(populationSize, pMutation, elitePercentage):
         population = newPopulation.copy()
         
         # if x%10 == 0:
-        #     print([tourLength(i) for i in population[:30]])
+        # print([tourLength(i) for i in population[:30]])
         
         # terminate after about 50 seconds
         if (datetime.now() - start > timedelta(seconds=50)):
