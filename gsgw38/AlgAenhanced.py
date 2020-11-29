@@ -361,7 +361,7 @@ def mutateChild(child, pMutation):
         return child
 
 
-def chooseParent(population):
+def chooseParentOld(population):
     '''given a population this function picks a parent based on its fitness'''
     # store all the fitnesses in an array
     fitnesses = []
@@ -374,6 +374,18 @@ def chooseParent(population):
     # pick one
     parent = random.choices(population=population, weights=fitnesses)
     return parent[0]
+
+def chooseParent(toursAndLengthsArray):
+    maxLength = toursAndLengthsArray[-1][1]
+
+    fitnesses = []
+    for i in range(len(toursAndLengthsArray)):
+        fitnesses.append(maxLength - toursAndLengthsArray[i][1])
+    
+    parentTourAndLength = random.choices(population=toursAndLengthsArray, weights=fitnesses)
+    #print(f"here's the tour and the length: {parentTourAndLength}") # should be a tuple of a tour and a length, encased in an array
+    parent = parentTourAndLength[0][0]
+    return parent
     
 
 # GENETIC ALGORITHM
@@ -391,30 +403,29 @@ def genetic(populationSize, pMutation, elitePercentage):
     # while x < 1:
     while True:
         x+=1
-
         # keep generating successively better populations until time runs out
-    
         # use the top 10% of the old population to start adding to
-        
-        tourFitnessesArray = []
+        toursAndLengthsArray = []
         for tour in population:
-            tourFitnessesArray.append((tour, tourLength(tour)))
-        tourFitnessesArray.sort(key=lambda x: x[1])
-        # for i in tourFitnessesArray:
+            toursAndLengthsArray.append((tour, tourLength(tour)))
+        toursAndLengthsArray.sort(key=lambda x: x[1])
+        # for i in toursAndLengthsArray:
         #     print(i)
         newPopulation = []
         i = 0
         while (len(newPopulation) < int(elitePercentage*populationSize)):
-            if tourFitnessesArray[i][0] not in newPopulation:
-                newPopulation.append(tourFitnessesArray[i][0])
+            if toursAndLengthsArray[i][0] not in newPopulation:
+                newPopulation.append(toursAndLengthsArray[i][0])
             i += 1
         
         bestOne = newPopulation[0]
 
         # fill up the new population
         while len(newPopulation) < populationSize:
-            parentX = chooseParent(population)
-            parentY = chooseParent(population)
+            # parentX = chooseParentOld(population)
+            # parentY = chooseParentOld(population)
+            parentX = chooseParent(toursAndLengthsArray)
+            parentY = chooseParent(toursAndLengthsArray)
             child = reproduce(parentX, parentY)
             child = mutateChild(child, pMutation)
             newPopulation.append(child)
@@ -424,16 +435,19 @@ def genetic(populationSize, pMutation, elitePercentage):
         # TODO make this a function of the change that occurs or the number of cities
         if newPopulation[0] != population[0]:
             pMutation += 0.001
-            print(f"Mutation probability increased to {pMutation}")
+            # print(f"Mutation probability increased to {pMutation}")
         
         population = newPopulation.copy()
         
-        if x%10 == 0:
-            print([tourLength(i) for i in population[:30]])
+        # if x%10 == 0:
+        # print([tourLength(i) for i in population[:30]])
 
         # terminate after about 50 seconds
         if (datetime.now() - start > timedelta(seconds=50)):
+            print(f"the number of iterations was {x}")
             return bestOne
+        
+
 
 # set parameters
 populationSize = 100
