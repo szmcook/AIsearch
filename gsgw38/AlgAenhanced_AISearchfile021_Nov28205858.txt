@@ -1,5 +1,0 @@
-USER = gsgw38 (Sam Cook),
-ALGORITHM CODE = GA, NAME OF CITY-FILE = AISearchfile021.txt,
-SIZE = 21, TOUR LENGTH = 2611,
-3,2,13,10,16,4,20,11,7,18,17,8,14,0,15,19,12,9,6,5,1,
-NOTE = This is the result from the genetic algorithm with population 100 and mutation chance 0.1

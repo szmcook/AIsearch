@@ -403,8 +403,11 @@ def genetic(populationSize, pMutation, elitePercentage):
         # for i in tourFitnessesArray:
         #     print(i)
         newPopulation = []
-        for i in range(0, int(elitePercentage*populationSize)):
-            newPopulation.append(tourFitnessesArray[i][0])
+        i = 0
+        while (len(newPopulation) < int(elitePercentage*populationSize)):
+            if tourFitnessesArray[i][0] not in newPopulation:
+                newPopulation.append(tourFitnessesArray[i][0])
+            i += 1
         
         bestOne = newPopulation[0]
 
@@ -417,7 +420,8 @@ def genetic(populationSize, pMutation, elitePercentage):
             newPopulation.append(child)
         population = newPopulation.copy()
         
-        print([tourLength(i) for i in population[:30]])
+        # if x%10 == 0:
+        #     print([tourLength(i) for i in population[:30]])
         
         # terminate after about 50 seconds
         if (datetime.now() - start > timedelta(seconds=50)):
