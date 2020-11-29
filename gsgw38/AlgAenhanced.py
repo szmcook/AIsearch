@@ -441,10 +441,10 @@ def genetic(populationSize, pMutation, elitePercentage):
         
         # if x%10 == 0:
         # print([tourLength(i) for i in population[:30]])
+        # print(f"iterations: {x}")
 
         # terminate after about 50 seconds
         if (datetime.now() - start > timedelta(seconds=50)):
-            print(f"the number of iterations was {x}")
             return bestOne
         
 
