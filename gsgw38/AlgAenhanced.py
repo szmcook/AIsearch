@@ -383,7 +383,7 @@ def chooseParent(toursAndLengthsArray):
         fitnesses.append(maxLength - toursAndLengthsArray[i][1])
     
     parentTourAndLength = random.choices(population=toursAndLengthsArray, weights=fitnesses)
-    #print(f"here's the tour and the length: {parentTourAndLength}") # should be a tuple of a tour and a length, encased in an array
+    
     parent = parentTourAndLength[0][0]
     return parent
     
