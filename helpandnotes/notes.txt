@@ -16,3 +16,6 @@ mutation
 crossover
 add to the population and then take the top half
 make the probability of mutation a function of the time?
+
+I've included elitism. The program takes the top populationSize/elitismPercentage distimct tours and automatically adds them to the next population
+I've also made the probability of mutation a function of it's initial value and also the number of times the best tour has changed - this is an attempt to avoid local optima

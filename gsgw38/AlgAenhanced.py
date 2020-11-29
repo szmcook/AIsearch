@@ -387,10 +387,10 @@ def genetic(populationSize, pMutation, elitePercentage):
     from datetime import datetime, timedelta
     start = datetime.now()
 
-    # x = 0
+    x = 0
     # while x < 1:
     while True:
-        # x+=1
+        x+=1
 
         # keep generating successively better populations until time runs out
     
@@ -418,11 +418,19 @@ def genetic(populationSize, pMutation, elitePercentage):
             child = reproduce(parentX, parentY)
             child = mutateChild(child, pMutation)
             newPopulation.append(child)
+        
+
+        # increase the population every time there's change in the best one
+        # TODO make this a function of the change that occurs or the number of cities
+        if newPopulation[0] != population[0]:
+            pMutation += 0.001
+            print(f"Mutation probability increased to {pMutation}")
+        
         population = newPopulation.copy()
         
-        # if x%10 == 0:
-        # print([tourLength(i) for i in population[:30]])
-        
+        if x%10 == 0:
+            print([tourLength(i) for i in population[:30]])
+
         # terminate after about 50 seconds
         if (datetime.now() - start > timedelta(seconds=50)):
             return bestOne
