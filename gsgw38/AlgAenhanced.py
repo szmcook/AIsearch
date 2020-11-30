@@ -443,6 +443,8 @@ def genetic(populationSize, pMutation, elitePercentage):
         # print([tourLength(i) for i in population[:30]])
         # print(f"iterations: {x}")
 
+        # TODO write a couple of lines that stop the file being written if the tour isn't shorter than the one I have already
+
         # terminate after about 50 seconds
         if (datetime.now() - start > timedelta(seconds=50)):
             return bestOne
