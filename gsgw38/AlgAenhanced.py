@@ -297,6 +297,33 @@ def newTour(num_cities):
     random.shuffle(tour)
     return tour
 
+def newTourNN(num_cities):
+    # TODO make some of the tours MSTs too
+    startCity = random.randint(0, num_cities-1)
+    tour = [startCity]
+    citiesNotInTour = set({city for city in range(num_cities)} - {startCity})
+
+    # print(f'tour: {tour}')
+    while len(tour) < num_cities:
+        # find the nearest neighbour to the end city, add it to the tour and remove it from citiesNotInTour
+        endCity = tour[-1]
+        closestCity = min(citiesNotInTour, key=lambda c: dist_matrix[endCity][c])
+        tour.append(closestCity)
+        citiesNotInTour.remove(closestCity)
+    return tour
+
+def primsMST(num_cities):
+    startCity = random.randint(0, num_cities)
+
+    visited = []
+    unvisited = set({city for city in range(num_cities)} - {startCity})
+    visited.append(startCity)
+    # find the shortest edge connected a visited to an unvisited
+    for city in visited:
+        closestCity = min(unvisited, key=lambda c: dist_matrix[city][c])
+        distance = dist_matrix[city][closestCity]
+    print(distance)
+    return 0
 
 def reproduce(parentX, parentY):
     '''makes a child from parentX and parentY'''
@@ -390,10 +417,16 @@ def chooseParent(toursAndLengthsArray):
 
 # GENETIC ALGORITHM
 def genetic(populationSize, pMutation, elitePercentage):
+
+    ####    TESTS   ####   
+    print(primsMST(num_cities))
+    ####################
+
+
     # start with randomly generated initial population
     population = []
     for _ in range(populationSize):
-        population.append(newTour(num_cities))
+        population.append(newTourNN(num_cities))
 
     # start the timer
     from datetime import datetime, timedelta
@@ -446,7 +479,7 @@ def genetic(populationSize, pMutation, elitePercentage):
         # TODO write a couple of lines that stop the file being written if the tour isn't shorter than the one I have already
 
         # terminate after about 50 seconds
-        if (datetime.now() - start > timedelta(seconds=7200)):
+        if (datetime.now() - start > timedelta(seconds=50)):
             return bestOne
         
 
