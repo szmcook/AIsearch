@@ -319,7 +319,7 @@ def primsMST(num_cities):
     visited = []
     unvisited = set({city for city in range(num_cities)} - {startCity})
     visited.append(startCity)
-    # find the shortest edge connected a visited to an unvisited
+    # find the shortest edge connected a visited to an unvisited 
     for city in visited:
         closestCity = min(unvisited, key=lambda c: dist_matrix[city][c])
         distance = dist_matrix[city][closestCity]
