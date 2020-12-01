@@ -313,6 +313,7 @@ def newTourNN(num_cities):
     return tour
 
 def primsMST(num_cities):
+    '''produces an MST for the city set using prim's algorithm'''
     startCity = random.randint(0, num_cities)
 
     visited = []
