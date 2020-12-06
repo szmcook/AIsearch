@@ -444,10 +444,10 @@ def genetic(populationSize, pMutation, elitePercentage):
     from datetime import datetime, timedelta
     start = datetime.now()
 
-    x = 0
+    # x = 0
     # while x < 1:
     while True:
-        x+=1
+        # x+=1
         # keep generating successively better populations until time runs out
         # use the top 10% of the old population to start adding to
         toursAndLengthsArray = []
@@ -491,7 +491,7 @@ def genetic(populationSize, pMutation, elitePercentage):
         # TODO write a couple of lines that stop the file being written if the tour isn't shorter than the one I have already
 
         # terminate after about 50 seconds
-        if (datetime.now() - start > timedelta(seconds=50)):
+        if (datetime.now() - start > timedelta(seconds=1800)):
             return bestOne
         
 
