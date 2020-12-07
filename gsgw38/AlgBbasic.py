@@ -74,25 +74,25 @@ def build_distance_matrix(num_cities, distances, city_format):
     if city_format == "full":
         for j in range(num_cities):
             row = []
-            for k in range(0, num_cities):
+            for _ in range(0, num_cities):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     elif city_format == "upper_tri":
         for j in range(0, num_cities):
             row = []
-            for k in range(j):
+            for _ in range(j):
                 row.append(0)
-            for k in range(num_cities - j):
+            for _ in range(num_cities - j):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     else:
         for j in range(0, num_cities):
             row = []
-            for k in range(j + 1):
+            for _ in range(j + 1):
                 row.append(0)
-            for k in range(0, num_cities - (j + 1)):
+            for _ in range(0, num_cities - (j + 1)):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
@@ -249,7 +249,7 @@ my_last_name = "Cook"
 ############ 'alg_codes_and_tariffs.txt' (READ THIS FILE TO SEE THE CODES).
 ############
 
-algorithm_code = "SA"
+algorithm_code = "PS"
 
 ############
 ############ DO NOT TOUCH OR ALTER THE CODE BELOW! YOU HAVE BEEN WARNED!
@@ -274,8 +274,94 @@ added_note = ""
 ############ NOW YOUR CODE SHOULD BEGIN.
 ############
 
-tour = []
-tour_length = len(tour)
+
+import random
+# HELPER FUNCTIONS
+
+def tourLength(tour):
+    '''finds the length of a tour'''
+    tour_length = 0
+    for i in range(0, num_cities - 1):
+        tour_length = tour_length + dist_matrix[tour[i]][tour[i + 1]]
+    tour_length = tour_length + dist_matrix[tour[num_cities - 1]][tour[0]]
+    return tour_length
+
+
+def newTour(num_cities):
+    '''creates a random canonical tour of length num_cities'''
+    tour = []
+    for i in range(1, num_cities):
+        tour.append(i)
+    random.shuffle(tour)
+    tour.insert(0,0)
+    if tour[1] > tour[-1]:
+        tour[1], tour[-1] = tour[-1], tour[1]
+    return tour
+
+
+def randomVelocity():
+    '''produces a random sequence of swaps'''
+    # TODO introduce normalisation
+    numberOfSwaps = random.randint(0, num_cities)
+    swaps = []
+    for _ in range(numberOfSwaps):
+        index = random.randint(1, num_cities-2)
+        swaps.append((index, index+1 ))
+    return swaps
+
+
+def addVelocity(particle, velocity):
+    '''applies a series of swaps to a tour'''
+    for pair in velocity:
+        particle[pair[0]], particle[pair[1]] = particle[pair[1]], particle[pair[0]]
+    return particle
+
+
+def thetaVelocity(theta, velocity):
+    '''multiply the velocity by theta'''
+    return velocity
+
+
+def PSO(maxIterations, swarmSize):
+    # parameters
+    theta = 1
+    alpha = 1
+    beta = 1
+
+
+    swarm = []      # array of tours
+    pHat = []       # array of tuples with integers representing the best tour lengths and the tour of that length
+    velocities = [] # dictionary of sequences of swaps, this is therefore a dictionary with tours as keys and the values are arrays of tuples where each tuple stores a pair of indices to swap
+    for _ in range(2):
+        new_tour = newTour(num_cities)
+        swarm.append(new_tour)
+        pHat.append( (tourLength(new_tour), new_tour) )
+        velocities.append(randomVelocity())
+    bestTour = min(pHat, key = lambda x: x[0])
+
+    # print(f'swarm is {swarm}')
+    print(f'velocities: {velocities}')
+    # print(f'pHat: {pHat}')
+    # print(bestTour)
+
+    t = 0
+
+    while t < maxIterations:
+        for a in range(swarmSize):
+            neighbourHoodBest = bestTour         # the length of the best tour in the neighbourhood using delta = infinity
+            
+            print(f'swarm[a] is a tour: {swarm[a]}')
+            swarm[a] = addVelocity(swarm[a], velocities[a])        # this will need to be a function
+            print(f'the swaps it\'ll undertake are: {velocities[a]}')
+            print(f'it\'s now undergone a series of swaps to become: {swarm[a]}')
+
+            epsilon1 = random.random()      # TODO these need some ranges
+            epsilon2 = random.random()
+            # TODO make the new velocity thing work
+            velocities[a] = thetaVelocity(theta, velocities[a]) + alpha*epsilon1*(pHat[a] - swarm[a]) + beta*epsilon2*(neighbourHoodBest - swarm[a])
+            pHat[a] = min(pHat[a], tourLength(swarm[a]))
+
+    return bestTour
 
 
 
@@ -283,8 +369,13 @@ tour_length = len(tour)
 
 
 
-
-
+# parameters
+swarmSize = 2
+maxIterations = 100
+# generate the tour and find its length
+tour = PSO(maxIterations, swarmSize)
+tour_length = tourLength(tour)
+added_note = f"This is the result from the genetic algorithm with swarm size {swarmSize} and {maxIterations} iterations"
 
 
 
