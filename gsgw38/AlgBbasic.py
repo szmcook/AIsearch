@@ -310,11 +310,13 @@ def randomVelocity():
     return swaps
 
 
-def applyVelocity(particle, velocity):
+def applyVelocity(tour, velocity):
     '''applies a series of swaps to a tour'''
+    print(velocity)
     for pair in velocity:
-        particle[pair[0]], particle[pair[1]] = particle[pair[1]], particle[pair[0]]
-    return particle
+        tour[pair[0]], tour[pair[1]] = tour[pair[1]], tour[pair[0]]
+    # should this then put the tour back into canonical form? doesn't seem necessary but might be required if it don't work
+    return tour
 
 
 # TODO
@@ -332,18 +334,21 @@ def addVelocities(thetaVelocity, alphaVelocity, betaVelocity):
 
 
 # TODO
-def combineVelocities(velocity1, velocity2):
-    '''create a linear combination of two velocities'''
-    velocity = [(1,2),(3,4)]
-    velocity = [(),()]
+def productV(epsilon, velocity):
+    '''find the product of epsilon and the velocity'''
     return velocity
     
 
-# TODO
-def subtractTours(tour1, tour2):
+def subtractTours(tourA, tourB):
     '''uses bubble sort to obtain the velocity to go from tour1 to tour2'''
-    velocity = [(),(),()]
-    return velocity
+    swaps = []
+
+    for i in range(num_cities-1):
+        for j in range(0, num_cities - i - 1):
+            if tourB.index(tourA[j]) > tourB.index(tourA[j+1]):
+                tourA[j], tourA[j+1] = tourA[j+1], tourA[j]
+                swaps.append((j,j+1))
+    return swaps
 
 
 # TODO
@@ -385,8 +390,8 @@ def PSO(maxIterations, swarmSize, theta = 1, alpha = 1, beta = 1):
             differenceToBest = subtractTours(pHat[a][1], swarm[a])
             differenceToNeighbourhoodBest = subtractTours(neighbourHoodBest[a][1], swarm[a])
 
-            differenceToBestWithEpsilon = combineVelocities(epsilon1, differenceToBest)
-            differenceToNeighbourhoodBestWithEpsilon = combineVelocities(epsilon2, differenceToNeighbourhoodBest)
+            differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
+            differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
             
             thetaVelocity = sMultVel(theta, velocities[a])
             alphaVelocity = sMultVel(alpha, differenceToBestWithEpsilon)
