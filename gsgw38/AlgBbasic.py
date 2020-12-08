@@ -310,72 +310,111 @@ def randomVelocity():
     return swaps
 
 
-def addVelocity(particle, velocity):
+def applyVelocity(particle, velocity):
     '''applies a series of swaps to a tour'''
     for pair in velocity:
         particle[pair[0]], particle[pair[1]] = particle[pair[1]], particle[pair[0]]
     return particle
 
 
-def thetaVelocity(theta, velocity):
-    '''multiply the velocity by theta'''
+# TODO
+def sMultVel(scalar, velocity):
+    '''multiply the velocity by a scalar'''
     return velocity
 
 
-def PSO(maxIterations, swarmSize):
-    # parameters
-    theta = 1
-    alpha = 1
-    beta = 1
+# TODO
+def addVelocities(thetaVelocity, alphaVelocity, betaVelocity):
+    '''create a linear combination of the three velocities'''
+    velocity = [(1,2),(3,4)]
+    velocity = [(),()]
+    return velocity
 
 
-    swarm = []      # array of tours
-    pHat = []       # array of tuples with integers representing the best tour lengths and the tour of that length
-    velocities = [] # dictionary of sequences of swaps, this is therefore a dictionary with tours as keys and the values are arrays of tuples where each tuple stores a pair of indices to swap
-    for _ in range(2):
+# TODO
+def combineVelocities(velocity1, velocity2):
+    '''create a linear combination of two velocities'''
+    velocity = [(1,2),(3,4)]
+    velocity = [(),()]
+    return velocity
+    
+
+# TODO
+def subtractTours(tour1, tour2):
+    '''uses bubble sort to obtain the velocity to go from tour1 to tour2'''
+    velocity = [(),(),()]
+    return velocity
+
+
+# TODO
+def normalise(vector):
+    '''uses the bubblesort method to normalise a vector'''
+    return vector
+
+
+def PSO(maxIterations, swarmSize, theta = 1, alpha = 1, beta = 1):
+    swarm = []      # array of the current tours, swarm[i] is the ith tour
+    pHat = []       # array of tuples with integers representing the best tour lengths and the tour of that length, pHat[i] is the best length i has had and how it appeared at that length
+    velocities = [] # array of velocities, represented as arrays of tuples (swaps), velocities[i] is the current velocity of swarm[i] (the ith tour)
+    for _ in range(swarmSize):
         new_tour = newTour(num_cities)
         swarm.append(new_tour)
         pHat.append( (tourLength(new_tour), new_tour) )
         velocities.append(randomVelocity())
+    
     bestTour = min(pHat, key = lambda x: x[0])
-
-    # print(f'swarm is {swarm}')
-    print(f'velocities: {velocities}')
-    # print(f'pHat: {pHat}')
-    # print(bestTour)
 
     t = 0
 
+    neighbourHoodBest = [None]*swarmSize
+
     while t < maxIterations:
+        
         for a in range(swarmSize):
-            neighbourHoodBest = bestTour         # the length of the best tour in the neighbourhood using delta = infinity
+
+            neighbourHoodBest[a] = bestTour     # the length and description of the best tour in the neighbourhood using delta = infinity. CURRENTLY THIS IS STUPID AS IT'S AN ARRAY OF N IDENTICAL ELEMENTS.
             
-            print(f'swarm[a] is a tour: {swarm[a]}')
-            swarm[a] = addVelocity(swarm[a], velocities[a])        # this will need to be a function
-            print(f'the swaps it\'ll undertake are: {velocities[a]}')
-            print(f'it\'s now undergone a series of swaps to become: {swarm[a]}')
+            # print(f'swarm[a] is a tour: {swarm[a]}')
+            # print(f'the swaps it\'ll undertake are: {velocities[a]}')
+            swarm[a] = applyVelocity(swarm[a], velocities[a])          
+            # print(f'it\'s now undergone a series of swaps to become: {swarm[a]}\n')
 
-            epsilon1 = random.random()      # TODO these need some ranges
-            epsilon2 = random.random()
-            # TODO make the new velocity thing work
-            velocities[a] = thetaVelocity(theta, velocities[a]) + alpha*epsilon1*(pHat[a] - swarm[a]) + beta*epsilon2*(neighbourHoodBest - swarm[a])
-            pHat[a] = min(pHat[a], tourLength(swarm[a]))
+            epsilon1 = randomVelocity()
+            epsilon2 = randomVelocity()
+            
+            differenceToBest = subtractTours(pHat[a][1], swarm[a])
+            differenceToNeighbourhoodBest = subtractTours(neighbourHoodBest[a][1], swarm[a])
 
-    return bestTour
+            differenceToBestWithEpsilon = combineVelocities(epsilon1, differenceToBest)
+            differenceToNeighbourhoodBestWithEpsilon = combineVelocities(epsilon2, differenceToNeighbourhoodBest)
+            
+            thetaVelocity = sMultVel(theta, velocities[a])
+            alphaVelocity = sMultVel(alpha, differenceToBestWithEpsilon)
+            betaVelocity = sMultVel(beta, differenceToNeighbourhoodBestWithEpsilon)
+            
+            velocities[a] = addVelocities(thetaVelocity, alphaVelocity, betaVelocity)
+            
+            # pHat[a] is the best tuple out of the tour's current (length, position) and the tour's best (length, position)
+            if tourLength(swarm[a]) < pHat[a][0]:
+                pHat[a] = (tourLength(swarm[a]), swarm[a])
 
+        # if any of the best tours, those found in pHat, are better than the best tour then update the best tour.
+        for tour in pHat:
+            if tour[0] < bestTour[0]:
+                bestTour = tour
 
+        t = t+1
 
-
-
+    return bestTour[1]
 
 
 # parameters
-swarmSize = 2
-maxIterations = 100
+swarmSize = 1
+maxIterations = 2
 # generate the tour and find its length
 tour = PSO(maxIterations, swarmSize)
 tour_length = tourLength(tour)
-added_note = f"This is the result from the genetic algorithm with swarm size {swarmSize} and {maxIterations} iterations"
+added_note = f"This is the result from the particle swarm optimisation algorithm with swarm size {swarmSize} and {maxIterations} iterations"
 
 
 
