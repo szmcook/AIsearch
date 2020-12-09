@@ -331,11 +331,9 @@ def sMultVel(scalar, velocity):
     return velocity
 
 
-# TODO
 def addVelocities(velocity1, velocity2):
     '''create a linear combination of the three velocities'''
-    velocity = [(1,2),(3,4)]
-    velocity = [(),()]
+    velocity = velocity1 + velocity2
     return velocity
 
 
@@ -428,7 +426,7 @@ def PSO(maxIterations, swarmSize, theta = 1, alpha = 1, beta = 1):
 
 
 # parameters
-swarmSize = 1
+swarmSize = 2
 maxIterations = 2
 # generate the tour and find its length
 tour = PSO(maxIterations, swarmSize)
