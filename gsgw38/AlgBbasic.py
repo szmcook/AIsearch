@@ -312,30 +312,44 @@ def randomVelocity():
 
 def applyVelocity(tour, velocity):
     '''applies a series of swaps to a tour'''
-    print(velocity)
     for pair in velocity:
         tour[pair[0]], tour[pair[1]] = tour[pair[1]], tour[pair[0]]
     # should this then put the tour back into canonical form? doesn't seem necessary but might be required if it don't work
     return tour
 
 
-# TODO
 def sMultVel(scalar, velocity):
     '''multiply the velocity by a scalar'''
+    for _ in range(int(scalar)):
+        velocity = addVelocities(velocity, velocity)
+    
+    fractionalPart = scalar - int(scalar)
+    if fractionalPart != 0:
+        index = int(fractionalPart * len(velocity))
+        velocity = velocity[:index]
+        
     return velocity
 
 
 # TODO
-def addVelocities(thetaVelocity, alphaVelocity, betaVelocity):
+def addVelocities(velocity1, velocity2):
     '''create a linear combination of the three velocities'''
     velocity = [(1,2),(3,4)]
     velocity = [(),()]
     return velocity
 
 
-# TODO
 def productV(epsilon, velocity):
     '''find the product of epsilon and the velocity'''
+    # this doesn't need to be a vector product.
+    # we use epsilon to point the vector in the proximity of the (best - current)
+    # we need a discrete equivalent.
+    # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha
+    # in this case the probability should be distributed so it's normally near 1
+    # you could also pick a random position swap and choose whether or not to delete it.
+    # this is a good choice for experimentation.
+    if epsilon > 0.7:
+        del velocity[random.randint(0, len(velocity)-1)]
     return velocity
     
 
@@ -384,8 +398,8 @@ def PSO(maxIterations, swarmSize, theta = 1, alpha = 1, beta = 1):
             swarm[a] = applyVelocity(swarm[a], velocities[a])          
             # print(f'it\'s now undergone a series of swaps to become: {swarm[a]}\n')
 
-            epsilon1 = randomVelocity()
-            epsilon2 = randomVelocity()
+            epsilon1 = random.random()
+            epsilon2 = random.random()
             
             differenceToBest = subtractTours(pHat[a][1], swarm[a])
             differenceToNeighbourhoodBest = subtractTours(neighbourHoodBest[a][1], swarm[a])
@@ -397,7 +411,7 @@ def PSO(maxIterations, swarmSize, theta = 1, alpha = 1, beta = 1):
             alphaVelocity = sMultVel(alpha, differenceToBestWithEpsilon)
             betaVelocity = sMultVel(beta, differenceToNeighbourhoodBestWithEpsilon)
             
-            velocities[a] = addVelocities(thetaVelocity, alphaVelocity, betaVelocity)
+            velocities[a] = addVelocities( addVelocities(thetaVelocity, alphaVelocity), betaVelocity)
             
             # pHat[a] is the best tuple out of the tour's current (length, position) and the tour's best (length, position)
             if tourLength(swarm[a]) < pHat[a][0]:
