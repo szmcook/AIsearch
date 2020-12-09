@@ -346,8 +346,9 @@ def productV(epsilon, velocity):
     # in this case the probability should be distributed so it's normally near 1
     # you could also pick a random position swap and choose whether or not to delete it.
     # this is a good choice for experimentation.
-    if epsilon > 0.7:
-        del velocity[random.randint(0, len(velocity)-1)]
+    if epsilon > 0.7 and len(velocity) > 1:
+        index = random.randint(0, len(velocity)-1)
+        del velocity[index]
     return velocity
     
 
@@ -369,7 +370,7 @@ def normalise(vector):
     return vector
 
 
-def PSO(maxIterations, swarmSize, theta = 1, alpha = 1, beta = 1):
+def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     swarm = []      # array of the current tours, swarm[i] is the ith tour
     pHat = []       # array of tuples with integers representing the best tour lengths and the tour of that length, pHat[i] is the best length i has had and how it appeared at that length
     velocities = [] # array of velocities, represented as arrays of tuples (swaps), velocities[i] is the current velocity of swarm[i] (the ith tour)
@@ -379,65 +380,61 @@ def PSO(maxIterations, swarmSize, theta = 1, alpha = 1, beta = 1):
         pHat.append( (tourLength(new_tour), new_tour) )
         velocities.append(randomVelocity())
     
+    # global bestTour
     bestTour = min(pHat, key = lambda x: x[0])
+    print(bestTour)
 
     t = 0
 
     neighbourHoodBest = [None]*swarmSize
 
-    while t < maxIterations:
+    from datetime import datetime, timedelta
+    start = datetime.now()
+
+    while True:
         
         for a in range(swarmSize):
-
+            # UPDATE NEIGHBOURHOOD
             neighbourHoodBest[a] = bestTour     # the length and description of the best tour in the neighbourhood using delta = infinity. CURRENTLY THIS IS STUPID AS IT'S AN ARRAY OF N IDENTICAL ELEMENTS.
             
-            # print(f'swarm[a] is a tour: {swarm[a]}')
-            # print(f'the swaps it\'ll undertake are: {velocities[a]}')
+            # UPDATE TOUR
             swarm[a] = applyVelocity(swarm[a], velocities[a])          
-            # print(f'it\'s now undergone a series of swaps to become: {swarm[a]}\n')
 
+            # UPDATE VELOCITY
             epsilon1 = random.random()
             epsilon2 = random.random()
-            
             differenceToBest = subtractTours(pHat[a][1], swarm[a])
+            # THE PROBLEM IS THAT BEST TOUR GETS EDITED WHEN NEIGHBOURHOOD BEST CHANGES OR IS USED
             differenceToNeighbourhoodBest = subtractTours(neighbourHoodBest[a][1], swarm[a])
-
             differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
             differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
-            
             thetaVelocity = sMultVel(theta, velocities[a])
             alphaVelocity = sMultVel(alpha, differenceToBestWithEpsilon)
             betaVelocity = sMultVel(beta, differenceToNeighbourhoodBestWithEpsilon)
-            
             velocities[a] = addVelocities( addVelocities(thetaVelocity, alphaVelocity), betaVelocity)
-            
-            # pHat[a] is the best tuple out of the tour's current (length, position) and the tour's best (length, position)
-            if tourLength(swarm[a]) < pHat[a][0]:
-                pHat[a] = (tourLength(swarm[a]), swarm[a])
 
-        # if any of the best tours, those found in pHat, are better than the best tour then update the best tour.
-        for tour in pHat:
-            if tour[0] < bestTour[0]:
-                bestTour = tour
+            # UPDATE pHat         
+            # pHat[a] is the lower of the tour's current (length, position) and the tour's best (length, position)
+            currentLength = tourLength(swarm[a])
+            print(currentLength)
+            if currentLength < pHat[a][0]:
+                pHat[a] = (currentLength, swarm[a]) # SO WE PUT THEM INTO PHAT
+            
+            if currentLength < bestTour[0]:
+                bestTour = (currentLength, swarm[a])
+                print(f'bestTour[0]: {bestTour[0]} and bestTour[1]: {bestTour[1]}')
 
         t = t+1
 
-    return bestTour[1]
-
-
-# parameters
+        if (datetime.now() - start > timedelta(seconds=0.005)):
+            print("exiting after 50 seconds")
+            return bestTour[1]
+    
 swarmSize = 2
-maxIterations = 2
 # generate the tour and find its length
-tour = PSO(maxIterations, swarmSize)
+tour = PSO(swarmSize=swarmSize, theta = 0.5, alpha = 0.75, beta = 2.75)
 tour_length = tourLength(tour)
-added_note = f"This is the result from the particle swarm optimisation algorithm with swarm size {swarmSize} and {maxIterations} iterations"
-
-
-
-
-
-
+added_note = f"This is the result from the particle swarm optimisation algorithm with swarm size {swarmSize}"
 
 
 ############
