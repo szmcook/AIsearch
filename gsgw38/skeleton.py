@@ -274,164 +274,24 @@ added_note = ""
 ############ NOW YOUR CODE SHOULD BEGIN.
 ############
 
+tour = [0, 6, 1, 3, 7, 11, 9, 5, 2, 8, 10, 4]
 
-import random
-# HELPER FUNCTIONS
-
-def tourLength(tour):
-    '''finds the length of a tour'''
-    tour_length = 0
-    for i in range(0, num_cities - 1):
-        tour_length = tour_length + dist_matrix[tour[i]][tour[i + 1]]
-    tour_length = tour_length + dist_matrix[tour[num_cities - 1]][tour[0]]
-    return tour_length
+tour_length = 0
 
 
-def newTour(num_cities):
-    '''creates a random canonical tour of length num_cities'''
-    tour = []
-    for i in range(1, num_cities):
-        tour.append(i)
-    random.shuffle(tour)
-    tour.insert(0,0)
-    if tour[1] > tour[-1]:
-        tour[1], tour[-1] = tour[-1], tour[1]
-    return tour
 
 
-def randomVelocity():
-    '''produces a random sequence of swaps'''
-    # TODO introduce normalisation
-    numberOfSwaps = random.randint(0, num_cities)
-    swaps = []
-    for _ in range(numberOfSwaps):
-        index = random.randint(1, num_cities-2)
-        swaps.append((index, index+1 ))
-    return swaps
 
 
-def applyVelocity(tour, velocity):
-    '''applies a series of swaps to a tour'''
-    for pair in velocity:
-        tour[pair[0]], tour[pair[1]] = tour[pair[1]], tour[pair[0]]
-    # should this then put the tour back into canonical form? doesn't seem necessary but might be required if it don't work
-    return tour
 
 
-def sMultVel(scalar, velocity):
-    '''multiply the velocity by a scalar'''
-    for _ in range(int(scalar)):
-        velocity = addVelocities(velocity, velocity)
-    
-    fractionalPart = scalar - int(scalar)
-    if fractionalPart != 0:
-        index = int(fractionalPart * len(velocity))
-        velocity = velocity[:index]
-        
-    return velocity
 
 
-def addVelocities(velocity1, velocity2):
-    '''create a linear combination of the three velocities'''
-    velocity = velocity1 + velocity2
-    return velocity
 
 
-def productV(epsilon, velocity):
-    '''find the product of epsilon and the velocity'''
-    # this doesn't need to be a vector product.
-    # we use epsilon to point the vector in the proximity of the (best - current)
-    # we need a discrete equivalent.
-    # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha
-    # in this case the probability should be distributed so it's normally near 1
-    # you could also pick a random position swap and choose whether or not to delete it.
-    # this is a good choice for experimentation.
-    if epsilon > 0.7 and len(velocity) > 1:
-        index = random.randint(0, len(velocity)-1)
-        del velocity[index]
-    return velocity
-    
-
-def subtractTours(tourA, tourB):
-    '''uses bubble sort to obtain the velocity to go from tour1 to tour2'''
-    swaps = []
-
-    for i in range(num_cities-1):
-        for j in range(0, num_cities - i - 1):
-            if tourB.index(tourA[j]) > tourB.index(tourA[j+1]):
-                tourA[j], tourA[j+1] = tourA[j+1], tourA[j]
-                swaps.append((j,j+1))
-    return swaps
 
 
-# TODO
-def normalise(vector):
-    '''uses the bubblesort method to normalise a vector'''
-    return vector
 
-
-import copy
-def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
-    swarm = []      # array of the current tours, swarm[i] is the ith tour. ARRAY OF ARRAYS
-    pHat = []       # array of tuples with integers representing the best tour lengths and the tour of that length, pHat[i][0] is the best length i has had and pHat[i][1]. ARRAY OF TUPLES WHICH ARE INTEGERS AND ARRAYS 
-    velocities = [] # array of velocities, represented as arrays of tuples (swaps), velocities[i] is the current velocity of swarm[i] (the ith tour)
-    for _ in range(swarmSize):
-        new_tour = newTour(num_cities)
-        swarm.append(copy.copy(new_tour))
-        pHat.append( (tourLength(new_tour), copy.copy(new_tour)) )
-        velocities.append(randomVelocity())
-    
-    # global bestTour
-    bestTour = min(pHat, key = lambda x: x[0])  # SHOULD BE A SINGLE TUPLE TAKEN FROM pHat
-
-    t = 0
-
-    neighbourHoodBest = [None]*swarmSize
-
-    from datetime import datetime, timedelta
-    start = datetime.now()
-
-    while True:
-        
-        for a in range(swarmSize):
-            # UPDATE NEIGHBOURHOOD           
-            neighbourHoodBest[a] = copy.deepcopy(bestTour)     # the length and description of the best tour in the neighbourhood using delta = infinity. CURRENTLY THIS IS STUPID AS IT'S AN ARRAY OF N IDENTICAL ELEMENTS.
-            
-            # UPDATE TOUR
-            swarm[a] = applyVelocity(copy.copy(swarm[a]), velocities[a])
-
-            # UPDATE pHat IF NECESSARY
-            currentLength = tourLength(swarm[a])
-            if currentLength < pHat[a][0]:
-                pHat[a] = copy.copy((currentLength, swarm[a]))
-
-            # UPDATE VELOCITY
-            epsilon1 = random.random()
-            epsilon2 = random.random()
-            differenceToBest = subtractTours(copy.copy(pHat[a][1]), copy.copy(swarm[a]))
-            differenceToNeighbourhoodBest = subtractTours(copy.copy(neighbourHoodBest[a][1]), copy.copy(swarm[a]))
-            differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
-            differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
-            thetaVelocity = sMultVel(theta, velocities[a])
-            alphaVelocity = sMultVel(alpha, differenceToBestWithEpsilon)
-            betaVelocity = sMultVel(beta, differenceToNeighbourhoodBestWithEpsilon)
-            velocities[a] = addVelocities( addVelocities(thetaVelocity, alphaVelocity), betaVelocity)
-        
-        # UPDATE BEST TOUR
-        bestTour = pHat[0]
-        for tt in pHat:
-            if tt[0] < bestTour[0]:
-                bestTour = tt
-       
-        t = t+1
-        if (datetime.now() - start > timedelta(seconds=50)):
-            return bestTour[1]
-    
-swarmSize = 30
-# generate the tour and find its length
-tour = PSO(swarmSize=swarmSize, theta = 0.5, alpha = 0.75, beta = 2.75)
-tour_length = tourLength(tour)
-added_note = f"This is the result from the particle swarm optimisation algorithm with swarm size {swarmSize}"
 
 
 ############
