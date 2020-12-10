@@ -1,5 +1,0 @@
-USER = gsgw38 (Sam Cook),
-ALGORITHM CODE = PS, NAME OF CITY-FILE = AISearchfile012.txt,
-SIZE = 12, TOUR LENGTH = 66,
-0,10,11,4,9,7,6,2,1,8,5,3,
-NOTE = This is the result from the particle swarm optimisation algorithm with swarm size 5
