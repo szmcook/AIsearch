@@ -370,15 +370,15 @@ def normalise(vector):
     return vector
 
 
-import copy
+from copy import copy, deepcopy
 def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     swarm = []      # array of the current tours, swarm[i] is the ith tour. ARRAY OF ARRAYS
     pHat = []       # array of tuples with integers representing the best tour lengths and the tour of that length, pHat[i][0] is the best length i has had and pHat[i][1]. ARRAY OF TUPLES WHICH ARE INTEGERS AND ARRAYS 
     velocities = [] # array of velocities, represented as arrays of tuples (swaps), velocities[i] is the current velocity of swarm[i] (the ith tour)
     for _ in range(swarmSize):
         new_tour = newTour(num_cities)
-        swarm.append(copy.copy(new_tour))
-        pHat.append( (tourLength(new_tour), copy.copy(new_tour)) )
+        swarm.append(copy(new_tour))
+        pHat.append( (tourLength(new_tour), copy(new_tour)) )
         velocities.append(randomVelocity())
     
     # global bestTour
@@ -395,21 +395,21 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
         
         for a in range(swarmSize):
             # UPDATE NEIGHBOURHOOD           
-            neighbourHoodBest[a] = copy.deepcopy(bestTour)     # the length and description of the best tour in the neighbourhood using delta = infinity. CURRENTLY THIS IS STUPID AS IT'S AN ARRAY OF N IDENTICAL ELEMENTS.
+            neighbourHoodBest[a] = deepcopy(bestTour)     # the length and description of the best tour in the neighbourhood using delta = infinity. CURRENTLY THIS IS STUPID AS IT'S AN ARRAY OF N IDENTICAL ELEMENTS.
             
             # UPDATE TOUR
-            swarm[a] = applyVelocity(copy.copy(swarm[a]), velocities[a])
+            swarm[a] = applyVelocity(copy(swarm[a]), velocities[a])
 
             # UPDATE pHat IF NECESSARY
             currentLength = tourLength(swarm[a])
             if currentLength < pHat[a][0]:
-                pHat[a] = copy.copy((currentLength, swarm[a]))
+                pHat[a] = copy((currentLength, swarm[a]))
 
             # UPDATE VELOCITY
             epsilon1 = random.random()
             epsilon2 = random.random()
-            differenceToBest = subtractTours(copy.copy(pHat[a][1]), copy.copy(swarm[a]))
-            differenceToNeighbourhoodBest = subtractTours(copy.copy(neighbourHoodBest[a][1]), copy.copy(swarm[a]))
+            differenceToBest = subtractTours(copy(pHat[a][1]), copy(swarm[a]))
+            differenceToNeighbourhoodBest = subtractTours(copy(neighbourHoodBest[a][1]), copy(swarm[a]))
             differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
             differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
             thetaVelocity = sMultVel(theta, velocities[a])
@@ -424,7 +424,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
                 bestTour = tt
        
         t = t+1
-        if (datetime.now() - start > timedelta(seconds=50)):
+        if (datetime.now() - start > timedelta(seconds=10*60)):
             return bestTour[1]
     
 swarmSize = 30
