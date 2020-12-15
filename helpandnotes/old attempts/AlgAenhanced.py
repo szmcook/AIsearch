@@ -249,7 +249,7 @@ my_last_name = "Cook"
 ############ 'alg_codes_and_tariffs.txt' (READ THIS FILE TO SEE THE CODES).
 ############
 
-algorithm_code = "PS"
+algorithm_code = "GA"
 
 ############
 ############ DO NOT TOUCH OR ALTER THE CODE BELOW! YOU HAVE BEEN WARNED!
@@ -268,16 +268,18 @@ print("   your algorithm code is legal and is " + algorithm_code + " -" + code_d
 ############ YOUR TOUR THAT YOU MIGHT BE INTERESTED IN LATER.
 ############
 
-added_note = ""
+added_note = "This is the result from the genetic algorithm with population 12 and mutation chance 0.05"
 
 ############
 ############ NOW YOUR CODE SHOULD BEGIN.
 ############
 
+# tour should contain a list of integers from 0 to n-1 representing the order the cities should be visited
 
-import random
-# HELPER FUNCTIONS
+# IMPORTS
+import random # this is imported at the top and is probably unnecessary
 
+# HELPFUL FUNCTIONS
 def tourLength(tour):
     '''finds the length of a tour'''
     tour_length = 0
@@ -286,153 +288,178 @@ def tourLength(tour):
     tour_length = tour_length + dist_matrix[tour[num_cities - 1]][tour[0]]
     return tour_length
 
-
+    
 def newTour(num_cities):
-    '''creates a random canonical tour of length num_cities'''
+    '''creates a random tour of length num_cities'''
     tour = []
-    for i in range(1, num_cities):
+    for i in range(num_cities):
         tour.append(i)
     random.shuffle(tour)
-    tour.insert(0,0)
-    if tour[1] > tour[-1]:
-        tour[1], tour[-1] = tour[-1], tour[1]
     return tour
 
 
-def randomVelocity():
-    '''produces a random sequence of swaps'''
-    # TODO introduce normalisation
-    numberOfSwaps = random.randint(0, num_cities)
-    swaps = []
-    for _ in range(numberOfSwaps):
-        index = random.randint(1, num_cities-2)
-        swaps.append((index, index+1 ))
-    return swaps
+def reproduce(parentX, parentY):
+    '''makes a child from parentX and parentY'''
+    # TODO try and make this faster
+    # print(f'x is \n{parentX}\ny is \n{parentY}')
+    partition = random.randint(0,num_cities)
+    partFromX = parentX[0:partition]
+    partFromY = parentY[partition:num_cities]
+    child = partFromX + partFromY
+    # eliminate duplicates
+    for i in range(partition, len(child)):
+        if child[i] in child[:i]:
+            # duplicate found
+            # swap it out
+            for sub in parentY:
+                if sub not in child:
+                    child[i] = sub
+    # print(f'child is \n{child}')
+    return child
 
 
-def applyVelocity(tour, velocity):
-    '''applies a series of swaps to a tour'''
-    for pair in velocity:
-        tour[pair[0]], tour[pair[1]] = tour[pair[1]], tour[pair[0]]
-    # should this then put the tour back into canonical form? doesn't seem necessary but might be required if it don't work
-    return tour
+def reproduce2(parentX, parentY):
+    '''makes a child from parentX and parentY'''
+    # TODO try and make this faster
+    print(f'x is \n{parentX}\ny is \n{parentY}')
+    partition = random.randint(0,num_cities)
+    partFromX = parentX[0:partition]
+    print(f'partFromX is {partFromX}')
+    for i in partFromX:
+        parentY.remove(i)
+    print(f'parentY has become {parentY}')
+    child = partFromX+parentY
+    print(f'child is \n{child}')
+    return child
 
 
-def sMultVel(scalar, velocity):
-    '''multiply the velocity by a scalar'''
-    for _ in range(int(scalar)):
-        velocity = addVelocities(velocity, velocity)
+def mutateChildOld(child, pMutation):
+    '''if a random float is lesser than the threshold swap two nodes in the child'''
+    if random.random() <= pMutation:
+        # pick two indices
+        i = random.randint(0, num_cities-1)
+        j = random.randint(0, num_cities-1)
+        # swap the elements in those indices
+        child[i], child[j] = child[j], child[i]
+        return child
+    else:
+        return child
+
+
+def mutateChild(child, pMutation):
+    '''Mutates the child by reversing a portion of the tour'''
+    if random.random() <= pMutation:
+        i = random.randint(0, num_cities-1)
+        j = random.randint(0, num_cities-1)
+        if i > j:
+            i, j = j, i
+        subTour = child[i:j]
+        subTour.reverse()
+        child[i:j] = subTour
+        return child
+    else:
+        return child
+
+
+def chooseParentOld(population):
+    '''given a population this function picks a parent based on its fitness'''
+    # store all the fitnesses in an array
+    fitnesses = []
+    for tour in population:
+        fitnesses.append(tourLength(tour))
+    # we wish to minimise these
+    maxLength = max(fitnesses)
+    for i in range(len(fitnesses)):
+        fitnesses[i] = maxLength - fitnesses[i]
+    # pick one
+    parent = random.choices(population=population, weights=fitnesses)
+    return parent[0]
+
+def chooseParent(toursAndLengthsArray):
+    maxLength = toursAndLengthsArray[-1][1]
+
+    fitnesses = []
+    for i in range(len(toursAndLengthsArray)):
+        fitnesses.append(maxLength - toursAndLengthsArray[i][1])
     
-    fractionalPart = scalar - int(scalar)
-    if fractionalPart != 0:
-        index = int(fractionalPart * len(velocity))
-        velocity = velocity[:index]
-        
-    return velocity
-
-
-def addVelocities(velocity1, velocity2):
-    '''create a linear combination of the three velocities'''
-    velocity = velocity1 + velocity2
-    return velocity
-
-
-def productV(epsilon, velocity):
-    '''find the product of epsilon and the velocity'''
-    # this doesn't need to be a vector product.
-    # we use epsilon to point the vector in the proximity of the (best - current)
-    # we need a discrete equivalent.
-    # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha
-    # in this case the probability should be distributed so it's normally near 1
-    # you could also pick a random position swap and choose whether or not to delete it.
-    # this is a good choice for experimentation.
-    if epsilon > 0.7 and len(velocity) > 1:
-        index = random.randint(0, len(velocity)-1)
-        del velocity[index]
-    return velocity
+    parentTourAndLength = random.choices(population=toursAndLengthsArray, weights=fitnesses)
+    
+    parent = parentTourAndLength[0][0]
+    return parent
     
 
-def subtractTours(tourA, tourB):
-    '''uses bubble sort to obtain the velocity to go from tour1 to tour2'''
-    swaps = []
+# GENETIC ALGORITHM
+def genetic(populationSize, pMutation, elitePercentage):
+    # start with randomly generated initial population
+    population = []
+    for _ in range(populationSize):
+        population.append(newTour(num_cities))
 
-    for i in range(num_cities-1):
-        for j in range(0, num_cities - i - 1):
-            if tourB.index(tourA[j]) > tourB.index(tourA[j+1]):
-                tourA[j], tourA[j+1] = tourA[j+1], tourA[j]
-                swaps.append((j,j+1))
-    return swaps
-
-
-# TODO
-def normalise(vector):
-    '''uses the bubblesort method to normalise a vector'''
-    return vector
-
-
-from copy import copy, deepcopy
-def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
-    swarm = []      # current state of each tour, swarm[i] is the ith tour
-    pHat = []       # tuples of the best length and the respective state for each tour
-    velocities = [] # array of the current velocities, represented as arrays of tuples (swaps)
-    for _ in range(swarmSize):
-        new_tour = newTour(num_cities)
-        swarm.append(copy(new_tour))
-        pHat.append( (tourLength(new_tour), copy(new_tour)) )
-        velocities.append(randomVelocity())
-    
-    bestTour = min(pHat, key = lambda x: x[0])  # SHOULD BE A SINGLE TUPLE TAKEN FROM pHat
-
-    t = 0
-
-    neighbourHoodBest = [None]*swarmSize
-
+    # start the timer
     from datetime import datetime, timedelta
     start = datetime.now()
 
+    x = 0
+    # while x < 1:
     while True:
-        for a in range(swarmSize):
-            # UPDATE NEIGHBOURHOOD TODO assess whether this is a spot where we can improve the quality of the tours
-            neighbourHoodBest[a] = deepcopy(bestTour)     # the length and description of the best tour in the neighbourhood using delta = infinity. CURRENTLY THIS IS STUPID AS IT'S AN ARRAY OF N IDENTICAL ELEMENTS.
-            print(f'updated neighbourhood at {datetime.now() - start}')
-            # UPDATE TOUR
-            swarm[a] = applyVelocity(copy(swarm[a]), velocities[a])
-            # at this point we should be able to replace velocities[a] with the gap between the new swarm[a] and the old swarm [a]
-            print(f'updated tour state at {datetime.now() - start}')
-            # UPDATE pHat IF NECESSARY
-            currentLength = tourLength(swarm[a])
-            if currentLength < pHat[a][0]:
-                pHat[a] = copy((currentLength, swarm[a]))
-                print(f'updated pHat at {datetime.now() - start}')
-            # UPDATE VELOCITY this is the slow bit
-            # TODO introducing normalisation might shorten the velocities and speed things up
-            if (datetime.now() - start > timedelta(seconds=50)):
-                print(t)
-                return bestTour[1]
-            epsilon1 = random.random()
-            epsilon2 = random.random()
-            differenceToBest = subtractTours(copy(pHat[a][1]), copy(swarm[a]))
-            differenceToNeighbourhoodBest = subtractTours(copy(neighbourHoodBest[a][1]), copy(swarm[a]))
-            differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
-            differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
-            thetaVelocity = sMultVel(theta, velocities[a])
-            alphaVelocity = sMultVel(alpha, differenceToBestWithEpsilon)
-            betaVelocity = sMultVel(beta, differenceToNeighbourhoodBestWithEpsilon)
-            velocities[a] = addVelocities( addVelocities(thetaVelocity, alphaVelocity), betaVelocity)
-            print(f'updated velocity at {datetime.now() - start}')
-            # UPDATE BEST TOUR
-            if pHat[a][0] < bestTour[0]:
-                bestTour = copy(pHat[a])
-                print(f'length of best: {bestTour[0]}')
-       
-        t = t+1
+        x+=1
+        # keep generating successively better populations until time runs out
+        # use the top 10% of the old population to start adding to
+        toursAndLengthsArray = []
+        for tour in population:
+            toursAndLengthsArray.append((tour, tourLength(tour)))
+        toursAndLengthsArray.sort(key=lambda x: x[1])
+        # for i in toursAndLengthsArray:
+        #     print(i)
+        newPopulation = []
+        i = 0
+        while (len(newPopulation) < int(elitePercentage*populationSize)):
+            if toursAndLengthsArray[i][0] not in newPopulation:
+                newPopulation.append(toursAndLengthsArray[i][0])
+            i += 1
         
-    
-swarmSize = 30
+        bestOne = newPopulation[0]
+
+        # fill up the new population
+        while len(newPopulation) < populationSize:
+            # parentX = chooseParentOld(population)
+            # parentY = chooseParentOld(population)
+            parentX = chooseParent(toursAndLengthsArray)
+            parentY = chooseParent(toursAndLengthsArray)
+            child = reproduce(parentX, parentY)
+            child = mutateChild(child, pMutation)
+            newPopulation.append(child)
+        
+
+        # increase the population every time there's change in the best one
+        # TODO make this a function of the change that occurs or the number of cities
+        if newPopulation[0] != population[0]:
+            pMutation += 0.001
+            # print(f"Mutation probability increased to {pMutation}")
+        
+        population = newPopulation.copy()
+        
+        # if x%10 == 0:
+        print([tourLength(i) for i in population[:10]])
+        print(f"iterations: {x}")
+
+        # terminate after about 50 seconds
+        if (datetime.now() - start > timedelta(seconds=3600)):
+            return bestOne
+        
+
+
+# set parameters
+populationSize = 100
+pMutation = 0.1
+elitePercentage = 0.1
 # generate the tour and find its length
-tour = PSO(swarmSize=swarmSize, theta = 0.5, alpha = 0.75, beta = 2.75)
+tour = genetic(populationSize, pMutation, elitePercentage)
 tour_length = tourLength(tour)
-added_note = f"This is the result from the particle swarm optimisation algorithm with swarm size {swarmSize}"
+
+added_note = f"This is the result from the enhanced genetic algorithm with population {populationSize} and mutation chance {pMutation}"
+
+
 
 
 ############
