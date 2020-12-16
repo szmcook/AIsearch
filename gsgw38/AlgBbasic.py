@@ -364,14 +364,8 @@ def subtractTours(tourA, tourB):
     return swaps
 
 
-# TODO
-def normalise(vector):
-    '''uses the bubblesort method to normalise a vector'''
-    return vector
-
-
-from copy import copy, deepcopy
 def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
+    from copy import copy, deepcopy
     swarm = []      # current state of each tour, swarm[i] is the ith tour
     pHat = []       # tuples of the best length and the respective state for each tour
     velocities = [] # array of the current velocities, represented as arrays of tuples (swaps)
@@ -394,21 +388,21 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
         for a in range(swarmSize):
             # UPDATE NEIGHBOURHOOD TODO assess whether this is a spot where we can improve the quality of the tours
             neighbourHoodBest[a] = deepcopy(bestTour)     # the length and description of the best tour in the neighbourhood using delta = infinity. CURRENTLY THIS IS STUPID AS IT'S AN ARRAY OF N IDENTICAL ELEMENTS.
-            print(f'updated neighbourhood at {datetime.now() - start}')
+            
             # UPDATE TOUR
-            swarm[a] = applyVelocity(copy(swarm[a]), velocities[a])
-            # at this point we should be able to replace velocities[a] with the gap between the new swarm[a] and the old swarm [a]
-            print(f'updated tour state at {datetime.now() - start}')
+            oldSwarmAPosition = copy(swarm[a])
+            swarm[a] = applyVelocity(oldSwarmAPosition, velocities[a])
+            velocities[a] = subtractTours(copy(swarm[a]), oldSwarmAPosition)
+            
             # UPDATE pHat IF NECESSARY
             currentLength = tourLength(swarm[a])
             if currentLength < pHat[a][0]:
                 pHat[a] = copy((currentLength, swarm[a]))
-                print(f'updated pHat at {datetime.now() - start}')
+                
             # UPDATE VELOCITY this is the slow bit
-            # TODO introducing normalisation might shorten the velocities and speed things up
             if (datetime.now() - start > timedelta(seconds=50)):
-                print(t)
                 return bestTour[1]
+                
             epsilon1 = random.random()
             epsilon2 = random.random()
             differenceToBest = subtractTours(copy(pHat[a][1]), copy(swarm[a]))
@@ -419,13 +413,13 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             alphaVelocity = sMultVel(alpha, differenceToBestWithEpsilon)
             betaVelocity = sMultVel(beta, differenceToNeighbourhoodBestWithEpsilon)
             velocities[a] = addVelocities( addVelocities(thetaVelocity, alphaVelocity), betaVelocity)
-            print(f'updated velocity at {datetime.now() - start}')
+            
             # UPDATE BEST TOUR
             if pHat[a][0] < bestTour[0]:
                 bestTour = copy(pHat[a])
-                print(f'length of best: {bestTour[0]}')
        
         t = t+1
+        print(f'iteration: {t}, best tour: {bestTour[0]}, average: {sum([tourLength(tour) for tour in swarm])//swarmSize}')
         
     
 swarmSize = 30

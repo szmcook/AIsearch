@@ -1,0 +1,46 @@
+# print('0 pHat 0s', [tour[0] for tour in pHat])
+# print('0 true val', [tourLength(tour[1]) for tour in pHat])
+# print('Fine at start') if ([tour[0] for tour in pHat] == [tourLength(tour[1]) for tour in pHat]) else print('BROKEN')
+
+
+
+# print('1 pHat 0s', [tour[0] for tour in pHat])
+# print('1 true val', [tourLength(tour[1]) for tour in pHat])
+# print('Fine after updating neighbourhood') if ([tour[0] for tour in pHat] == [tourLength(tour[1]) for tour in pHat]) else print('BROKEN')
+
+
+# print('2 pHat 0s', [tour[0] for tour in pHat])
+# print('2 true val', [tourLength(tour[1]) for tour in pHat])
+# print('Fine after updating tour') if ([tour[0] for tour in pHat] == [tourLength(tour[1]) for tour in pHat]) else print('BROKEN')
+
+
+# print('3 pHat 0s', [tour[0] for tour in pHat])
+# print('3 true val', [tourLength(tour[1]) for tour in pHat])
+# print('Fine after updating pHat') if ([tour[0] for tour in pHat] == [tourLength(tour[1]) for tour in pHat]) else print('BROKEN')
+
+
+# print('4 pHat 0s', [tour[0] for tour in pHat])
+# print('4 true val', [tourLength(tour[1]) for tour in pHat])
+# print('Fine after generating epsilon') if ([tour[0] for tour in pHat] == [tourLength(tour[1]) for tour in pHat]) else print('BROKEN')
+
+
+# print('5 pHat 0s', [tour[0] for tour in pHat])
+# print('5 true val', [tourLength(tour[1]) for tour in pHat])
+# print('Fine after subtracting tours') if ([tour[0] for tour in pHat] == [tourLength(tour[1]) for tour in pHat]) else print('BROKEN')
+
+
+# print('6 pHat 0s', [tour[0] for tour in pHat])
+# print('6 true val', [tourLength(tour[1]) for tour in pHat])
+if ([tour[0] for tour in pHat] != [tourLength(tour[1]) for tour in pHat]):
+print('BROKEN')
+
+
+# print(f'bestTour length, should be in the pHats? : {bestTour[0]}')
+# print(f'and the tour to go with it: {bestTour[1]}')
+
+
+# print(f'updated neighbourhood at {datetime.now() - start}')
+# print(f'updated tour state at {datetime.now() - start}')
+# print(f'updated pHat at {datetime.now() - start}')
+# print(f'updated velocity at {datetime.now() - start}')
+# print(f'length of best: {bestTour[0]}')
