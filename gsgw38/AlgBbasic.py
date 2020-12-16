@@ -276,6 +276,7 @@ added_note = ""
 
 
 import random
+random.seed(1)
 # HELPER FUNCTIONS
 
 def tourLength(tour):
@@ -379,7 +380,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
 
     t = 0
 
-    neighbourHoodBest = [None]*swarmSize
+    neighbourHoodBest = bestTour
 
     from datetime import datetime, timedelta
     start = datetime.now()
@@ -387,8 +388,8 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     while True:
         for a in range(swarmSize):
             # UPDATE NEIGHBOURHOOD TODO assess whether this is a spot where we can improve the quality of the tours
-            neighbourHoodBest[a] = deepcopy(bestTour)     # the length and description of the best tour in the neighbourhood using delta = infinity. CURRENTLY THIS IS STUPID AS IT'S AN ARRAY OF N IDENTICAL ELEMENTS.
-            
+            neighbourHoodBest = bestTour
+
             # UPDATE TOUR
             oldSwarmAPosition = copy(swarm[a])
             swarm[a] = applyVelocity(oldSwarmAPosition, velocities[a])
@@ -406,7 +407,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             epsilon1 = random.random()
             epsilon2 = random.random()
             differenceToBest = subtractTours(copy(pHat[a][1]), copy(swarm[a]))
-            differenceToNeighbourhoodBest = subtractTours(copy(neighbourHoodBest[a][1]), copy(swarm[a]))
+            differenceToNeighbourhoodBest = subtractTours(copy(neighbourHoodBest[1]), copy(swarm[a]))
             differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
             differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
             thetaVelocity = sMultVel(theta, velocities[a])
@@ -419,12 +420,13 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
                 bestTour = copy(pHat[a])
        
         t = t+1
-        print(f'iteration: {t}, best tour: {bestTour[0]}, average: {sum([tourLength(tour) for tour in swarm])//swarmSize}')
+        if t%50 == 0:
+            print(f'iteration: {t}, best tour: {bestTour[0]}, average: {sum([tourLength(tour) for tour in swarm])//swarmSize}')
         
     
 swarmSize = 30
 # generate the tour and find its length
-tour = PSO(swarmSize=swarmSize, theta = 0.5, alpha = 0.75, beta = 2.75)
+tour = PSO(swarmSize=swarmSize, theta = 0.8, alpha = 0.75, beta = 2)
 tour_length = tourLength(tour)
 added_note = f"This is the result from the particle swarm optimisation algorithm with swarm size {swarmSize}"
 
