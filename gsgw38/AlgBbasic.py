@@ -277,7 +277,7 @@ added_note = ""
 # IMPORTS
 
 import random
-# random.seed(1)
+random.seed(1)
 from copy import copy
 from datetime import datetime, timedelta
 
@@ -369,6 +369,7 @@ def subtractTours(tourA, tourB):
                 swaps.append((j,j+1))
     return swaps
 
+
 # global toursToPlot
 # toursToPlot = []
 
@@ -399,7 +400,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             # UPDATE pHat IF NECESSARY
             currentLength = tourLength(swarm[a])
             if currentLength < pHat[a][0]:
-                pHat[a] = copy((currentLength, swarm[a])) # FIXME possible mistake spot
+                pHat[a] = copy((currentLength, swarm[a]))
                 
             # TERMINATION CONDITION
             if (datetime.now() - start > timedelta(seconds=50)):
@@ -435,9 +436,9 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     
 # parameters
 swarmSize = 30
-theta = 0.8
-alpha = 0.75
-beta = 2
+theta = 0.4
+alpha = 0.5
+beta = 3.0
 tour = PSO(swarmSize=swarmSize, theta = theta, alpha = alpha, beta = beta)
 tour_length = tourLength(tour)
 added_note = f"This is the result from the particle swarm optimisation algorithm with swarm size {swarmSize}, theta={theta} ,alpha={alpha}, beta={beta}"
