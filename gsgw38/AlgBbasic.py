@@ -277,7 +277,7 @@ added_note = ""
 # IMPORTS
 
 import random
-random.seed(1)
+# random.seed(1)
 from copy import copy
 from datetime import datetime, timedelta
 
@@ -325,20 +325,21 @@ def applyVelocity(tour, velocity):
 
 def scalarMultiplyVelocity(scalar, velocity):
     '''multiply the velocity by a scalar'''
+    new_velocity = []
     for _ in range(int(scalar)):
-        velocity = addVelocities(velocity, velocity)
+        new_velocity = new_velocity + velocity
     
     fractionalPart = scalar - int(scalar)
     if fractionalPart != 0:
         index = int(fractionalPart * len(velocity))
-        velocity = velocity[:index]
-        
-    return velocity
+        new_velocity = new_velocity + velocity[:index]
+    
+    return new_velocity
 
 
-def addVelocities(velocity1, velocity2):
-    '''create a linear combination of the three velocities'''
-    return velocity1 + velocity2
+# def addVelocities(velocity1, velocity2):
+#     '''create a linear combination of the three velocities'''
+#     return velocity1 + velocity2
 
 
 def productV(epsilon, velocity):
@@ -350,10 +351,11 @@ def productV(epsilon, velocity):
     # in this case the probability should be distributed so it's normally near 1
     # you could also pick a random position swap and choose whether or not to delete it.
     # this is a good choice for experimentation.
-    if epsilon > 0.7 and len(velocity) > 1:
+    if epsilon < 0.3 and len(velocity) > 1:
         index = random.randint(0, len(velocity)-1)
-        del velocity[index]
-    return velocity
+        return velocity[:index] + velocity[index+1:]
+    else:
+        return velocity
     
 
 def subtractTours(tourA, tourB):
@@ -407,24 +409,28 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
                 return bestTour[1]
                 
             # UPDATE VELOCITY this is the slow bit
-            epsilon1 = random.random()
-            epsilon2 = random.random()
-            differenceToBest = subtractTours(pHat[a][1], swarm[a])
-            differenceToNeighbourhoodBest = subtractTours(neighbourHoodBest[1], swarm[a])
-            differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
-            differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
             thetaVelocity = scalarMultiplyVelocity(theta, velocities[a])
+            
+            epsilon1 = random.random()
+            differenceToBest = subtractTours(pHat[a][1], swarm[a])
+            differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
             alphaVelocity = scalarMultiplyVelocity(alpha, differenceToBestWithEpsilon)
+
+            epsilon2 = random.random()
+            differenceToNeighbourhoodBest = subtractTours(neighbourHoodBest[1], swarm[a])
+            differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
             betaVelocity = scalarMultiplyVelocity(beta, differenceToNeighbourhoodBestWithEpsilon)
-            velocities[a] = addVelocities( addVelocities(thetaVelocity, alphaVelocity), betaVelocity)
+            
+            velocities[a] = thetaVelocity + alphaVelocity + betaVelocity
             
             # UPDATE BEST TOUR
             if pHat[a][0] < bestTour[0]:
                 bestTour = copy(pHat[a])
        
         t = t+1
+
+        # plotting
         # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
-        # print(f'iteration: {t}, best tour: {bestTour[0]}, average: {sum([tourLength(tour) for tour in swarm])//swarmSize}')
         
     
 # parameters
