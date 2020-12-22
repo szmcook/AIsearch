@@ -370,8 +370,8 @@ def subtractTours(tourA, tourB):
     return swaps
 
 
-# global toursToPlot
-# toursToPlot = []
+global toursToPlot
+toursToPlot = []
 
 def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     swarm = []      # current state of each tour, swarm[i] is the ith tour
@@ -404,9 +404,9 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
                 
             # TERMINATION CONDITION
             if (datetime.now() - start > timedelta(seconds=50)):
-                # import matplotlib.pyplot as plt
-                # plt.plot(toursToPlot)
-                # plt.show()
+                import matplotlib.pyplot as plt
+                plt.plot(toursToPlot)
+                plt.show()
                 return bestTour[1]
                 
             # UPDATE VELOCITY this is the slow bit
@@ -431,11 +431,11 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
         t = t+1
 
         # plotting
-        # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
+        toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
         
     
 # parameters
-swarmSize = 30
+swarmSize = 20
 theta = 0.4
 alpha = 0.5
 beta = 3.0
