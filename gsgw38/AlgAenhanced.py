@@ -304,7 +304,6 @@ def newTour(num_cities):
     return tour
 
 def newTourNN(num_cities):
-    # TODO make some of the tours MSTs too
     startCity = random.randint(0, num_cities-1)
     tour = [startCity]
     citiesNotInTour = set({city for city in range(num_cities)} - {startCity})
@@ -341,7 +340,6 @@ def primsMST(num_cities):
 def reproduce(parentX, parentY):
     '''makes a child from parentX and parentY'''
     # TODO try and make this faster
-    # print(f'x is \n{parentX}\ny is \n{parentY}')
     partition = random.randint(0,num_cities)
     partFromX = parentX[0:partition]
     partFromY = parentY[partition:num_cities]
@@ -349,12 +347,10 @@ def reproduce(parentX, parentY):
     # eliminate duplicates
     for i in range(partition, len(child)):
         if child[i] in child[:i]:
-            # duplicate found
-            # swap it out
+            # duplicate found - swap it out
             for sub in parentY:
                 if sub not in child:
                     child[i] = sub
-    # print(f'child is \n{child}')
     return child
 
 
@@ -430,37 +426,21 @@ def chooseParent(toursAndLengthsArray):
 
 # GENETIC ALGORITHM
 def genetic(populationSize, pMutation, elitePercentage):
-
-    ####    TESTS   ####
-    # randomTour = newTour(num_cities)
-    # nnTour = newTourNN(num_cities)
-    # primTour = primsMST(num_cities)
-    # print(f'random tour:                {randomTour}\nits length: {tourLength(randomTour)}')
-    # print(f'nearest neighbour tour:     {nnTour}\nits length: {tourLength(nnTour)}')
-    # print(f'prims MST tour:             {primTour}\nits length: {tourLength(primTour)}')
-    ####################
-
-
     # start with randomly generated initial population
     population = []
     for _ in range(populationSize):
         population.append(newTourNN(num_cities))
 
-    # start the timer
     start = datetime.now()
 
-    # x = 0
-    # while x < 1:
     while True:
-        # x+=1
         # keep generating successively better populations until time runs out
-        # use the top 10% of the old population to start adding to
+        # use the top elitePercentage of the old population to start adding to
         toursAndLengthsArray = []
         for tour in population:
             toursAndLengthsArray.append((tour, tourLength(tour)))
         toursAndLengthsArray.sort(key=lambda x: x[1])
-        # for i in toursAndLengthsArray:
-        #     print(i)
+
         newPopulation = []
         i = 0
         while (len(newPopulation) < int(elitePercentage*populationSize)):
@@ -470,10 +450,12 @@ def genetic(populationSize, pMutation, elitePercentage):
         
         bestOne = newPopulation[0]
 
+        # terminate after about 50 seconds
+        if (datetime.now() - start > timedelta(seconds=50)):
+            return bestOne
+
         # fill up the new population
         while len(newPopulation) < populationSize:
-            # parentX = chooseParentOld(population)
-            # parentY = chooseParentOld(population)
             parentX = chooseParent(toursAndLengthsArray)
             parentY = chooseParent(toursAndLengthsArray)
             child = reproduce(parentX, parentY)
@@ -481,31 +463,18 @@ def genetic(populationSize, pMutation, elitePercentage):
             newPopulation.append(child)
         
 
-        # increase the population every time there's change in the best one
+        # increase the probability of mutation every time there's change in the best one
         # TODO make this a function of the change that occurs or the number of cities
         if newPopulation[0] != population[0]:
             pMutation += 0.001
-            # print(f"Mutation probability increased to {pMutation}")
         
         population = newPopulation.copy()
-        
-        # if x%10 == 0:
-        # print([tourLength(i) for i in population[:30]])
-        # print(f"iterations: {x}")
-
-        # TODO write a couple of lines that stop the file being written if the tour isn't shorter than the one I have already
-
-        # terminate after about 50 seconds
-        if (datetime.now() - start > timedelta(seconds=50)):
-            return bestOne
         
 
 # generate the tour and find its length
 tour = genetic(populationSize, pMutation, elitePercentage)
 tour_length = tourLength(tour)
-
 added_note = f"This is the result from the enhanced genetic algorithm with population {populationSize} and mutation chance {pMutation}"
-
 
 
 
