@@ -274,10 +274,16 @@ added_note = ""
 ############ NOW YOUR CODE SHOULD BEGIN.
 ############
 
-# IMPORTS
+    
+# SETTING PARAMETERS
+swarmSize = 20
+theta = 0.6
+alpha = 0.5
+beta = 3.0
 
+# IMPORTS
 import random
-random.seed(1)
+# random.seed(1)
 from copy import copy
 from datetime import datetime, timedelta
 
@@ -433,12 +439,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
         # plotting
         toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
         
-    
-# parameters
-swarmSize = 20
-theta = 0.4
-alpha = 0.5
-beta = 3.0
+
 tour = PSO(swarmSize=swarmSize, theta = theta, alpha = alpha, beta = beta)
 tour_length = tourLength(tour)
 added_note = f"This is the result from the particle swarm optimisation algorithm with swarm size {swarmSize}, theta={theta} ,alpha={alpha}, beta={beta}"

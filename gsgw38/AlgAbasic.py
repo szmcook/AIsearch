@@ -276,10 +276,15 @@ added_note = "This is the result from the genetic algorithm with population 12 a
 
 # tour should contain a list of integers from 0 to n-1 representing the order the cities should be visited
 
+# SETTING PARAMETERS
+populationSize = 100 # the size of the population in each generation
+pMutation = 0.1 # the probability of mutation in a child
+
 # IMPORTS
 import random # this is imported at the top and is probably unnecessary
+from datetime import datetime, timedelta
 
-# HELPFUL FUNCTIONS
+# HELPER FUNCTIONS
 def tourLength(tour):
     '''finds the length of a tour'''
     tour_length = 0
@@ -354,7 +359,6 @@ def genetic(populationSize, pMutation):
     for _ in range(populationSize):
         population.append(newTour(num_cities))
 
-    from datetime import datetime, timedelta
     start = datetime.now()
 
     while True:
@@ -363,7 +367,6 @@ def genetic(populationSize, pMutation):
         for i in population:
             if tourLength(i) < tourLength(bestOne):
                 bestOne = i
-                print(tourLength(i))
         newPopulation = [bestOne]
         
         # terminate after about 50 seconds
@@ -378,12 +381,8 @@ def genetic(populationSize, pMutation):
             child = mutateChild(child, pMutation)
             newPopulation.append(child)
         population = newPopulation
-        # print(f'size of the population is: {len(population)}')
 
-# parameters
-populationSize = 100
-pMutation = 0.1
-# TODO consider adding in the fitness threshold parameter but I think it's better not to.
+
 # generate the tour and find its length
 tour = genetic(populationSize, pMutation)
 tour_length = tourLength(tour)
