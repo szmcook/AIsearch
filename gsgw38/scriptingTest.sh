@@ -3,35 +3,35 @@
 # Test the city sets
 
 # AlgABasic
-python3 AlgAbasic.py AISearchfile012.txt
-echo "AlgAbasic with 12 cities done"
+# python3 AlgAbasic.py AISearchfile012.txt
+# echo "AlgAbasic with 12 cities done"
 
-python3 AlgAbasic.py AISearchfile017.txt
-echo "AlgAbasic with 17 cities done"
+# python3 AlgAbasic.py AISearchfile017.txt
+# echo "AlgAbasic with 17 cities done"
 
-python3 AlgAbasic.py AISearchfile021.txt
-echo "AlgAbasic with 21 cities done"
+# python3 AlgAbasic.py AISearchfile021.txt
+# echo "AlgAbasic with 21 cities done"
 
-python3 AlgAbasic.py AISearchfile026.txt
-echo "AlgAbasic with 26 cities done"
+# python3 AlgAbasic.py AISearchfile026.txt
+# echo "AlgAbasic with 26 cities done"
 
-python3 AlgAbasic.py AISearchfile042.txt
-echo "AlgAbasic with 42 cities done"
+# python3 AlgAbasic.py AISearchfile042.txt
+# echo "AlgAbasic with 42 cities done"
 
-python3 AlgAbasic.py AISearchfile048.txt
-echo "AlgAbasic with 48 cities done"
+# python3 AlgAbasic.py AISearchfile048.txt
+# echo "AlgAbasic with 48 cities done"
 
-python3 AlgAbasic.py AISearchfile058.txt
-echo "AlgAbasic with 58 cities done"
+# python3 AlgAbasic.py AISearchfile058.txt
+# echo "AlgAbasic with 58 cities done"
 
-python3 AlgAbasic.py AISearchfile175.txt
-echo "AlgAbasic with 175 cities done"
+# python3 AlgAbasic.py AISearchfile175.txt
+# echo "AlgAbasic with 175 cities done"
 
-python3 AlgAbasic.py AISearchfile180.txt
-echo "AlgAbasic with 180 cities done"
+# python3 AlgAbasic.py AISearchfile180.txt
+# echo "AlgAbasic with 180 cities done"
 
-python3 AlgAbasic.py AISearchfile535.txt
-echo "AlgAbasic with 535 cities done"
+# python3 AlgAbasic.py AISearchfile535.txt
+# echo "AlgAbasic with 535 cities done"
 
 # AlgAenhanced
 # python3 AlgAenhanced.py AISearchfile012.txt
@@ -94,3 +94,65 @@ echo "AlgAbasic with 535 cities done"
 
 # python3 AlgBbasic.py AISearchfile535.txt
 # echo "AlgBbasic with 535 cities done"
+
+# AlgBDD
+# python3 AlgBDD.py AISearchfile012.txt
+# echo "AlgBDD with 12 cities done"
+
+# python3 AlgBDD.py AISearchfile017.txt
+# echo "AlgBDD with 17 cities done"
+
+# python3 AlgBDD.py AISearchfile021.txt
+# echo "AlgBDD with 21 cities done"
+
+# python3 AlgBDD.py AISearchfile026.txt
+# echo "AlgBDD with 26 cities done"
+
+# python3 AlgBDD.py AISearchfile042.txt
+# echo "AlgBDD with 42 cities done"
+
+# python3 AlgBDD.py AISearchfile048.txt
+# echo "AlgBDD with 48 cities done"
+
+# python3 AlgBDD.py AISearchfile058.txt
+# echo "AlgBDD with 58 cities done"
+
+# python3 AlgBDD.py AISearchfile175.txt
+# echo "AlgBDD with 175 cities done"
+
+# python3 AlgBDD.py AISearchfile180.txt
+# echo "AlgBDD with 180 cities done"
+
+# python3 AlgBDD.py AISearchfile535.txt
+# echo "AlgBDD with 535 cities done"
+
+# AlgBenhanced
+python3 AlgBenhanced.py AISearchfile012.txt
+echo "AlgBenhanced with 12 cities done"
+
+python3 AlgBenhanced.py AISearchfile017.txt
+echo "AlgBenhanced with 17 cities done"
+
+python3 AlgBenhanced.py AISearchfile021.txt
+echo "AlgBenhanced with 21 cities done"
+
+python3 AlgBenhanced.py AISearchfile026.txt
+echo "AlgBenhanced with 26 cities done"
+
+python3 AlgBenhanced.py AISearchfile042.txt
+echo "AlgBenhanced with 42 cities done"
+
+python3 AlgBenhanced.py AISearchfile048.txt
+echo "AlgBenhanced with 48 cities done"
+
+python3 AlgBenhanced.py AISearchfile058.txt
+echo "AlgBenhanced with 58 cities done"
+
+python3 AlgBenhanced.py AISearchfile175.txt
+echo "AlgBenhanced with 175 cities done"
+
+python3 AlgBenhanced.py AISearchfile180.txt
+echo "AlgBenhanced with 180 cities done"
+
+python3 AlgBenhanced.py AISearchfile535.txt
+echo "AlgBenhanced with 535 cities done"

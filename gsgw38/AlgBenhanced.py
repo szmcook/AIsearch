@@ -282,7 +282,7 @@ beta = 3.0
 
 # IMPORTS
 import random
-random.seed(1)
+# random.seed(1)
 from copy import copy
 from datetime import datetime, timedelta
 
@@ -310,12 +310,9 @@ def newTour(num_cities):
 
 
 def newTourNN(num_cities):
-    # TODO make some of the tours MSTs too
     startCity = random.randint(0, num_cities-1)
     tour = [startCity]
     citiesNotInTour = set({city for city in range(num_cities)} - {startCity})
-
-    # print(f'tour: {tour}')
     while len(tour) < num_cities:
         # find the nearest neighbour to the end city, add it to the tour and remove it from citiesNotInTour
         endCity = tour[-1]
@@ -391,8 +388,8 @@ def subtractTours(tourA, tourB):
     return swaps
 
 
-global toursToPlot
-toursToPlot = []
+# global toursToPlot
+# toursToPlot = []
 
 def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     swarm = []      # current state of each tour, swarm[i] is the ith tour
@@ -428,10 +425,10 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
                 pHat[a] = copy((currentLength, swarm[a]))
                 
             # TERMINATION CONDITION
-            if (datetime.now() - start > timedelta(seconds=240)):
-                import matplotlib.pyplot as plt
-                plt.plot(toursToPlot)
-                plt.show()
+            if (datetime.now() - start > timedelta(seconds=50)):
+                # import matplotlib.pyplot as plt
+                # plt.plot(toursToPlot)
+                # plt.show()
                 return bestTour[1]
                 
             # UPDATE VELOCITY this is the slow bit
@@ -456,7 +453,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
         t = t+1
 
         # plotting
-        toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
+        # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
         
     
 tour = PSO(swarmSize=swarmSize, theta = theta, alpha = alpha, beta = beta)
