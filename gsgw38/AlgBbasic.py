@@ -343,14 +343,10 @@ def scalarMultiplyVelocity(scalar, velocity):
     return new_velocity
 
 
-def productV(epsilon, velocity):
-    '''find the product of epsilon and the velocity'''
-    # this doesn't need to be a vector product.
-    # we use epsilon to point the vector in the proximity of the (best - current)
-    # we need a discrete equivalent.
-    # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha
-    # in this case the probability should be distributed so it's normally near 1
-    # you could also pick a random position swap and choose whether or not to delete it.
+def epsilonRemove(epsilon, velocity):
+    '''removes a random swap from the velocity'''
+    # we use epsilon to point the vector in the proximity of the (best - current) and we need a discrete equivalent.
+    # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha - in this case the probability should be distributed so it's normally near 1
     # this is a good choice for experimentation.
     if epsilon < 0.3 and len(velocity) > 1:
         index = random.randint(0, len(velocity)-1)
@@ -423,12 +419,12 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             
             epsilon1 = random.random()
             differenceToBest = subtractTours(pHat[a][1], swarm[a])
-            differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
+            differenceToBestWithEpsilon = epsilonRemove(epsilon1, differenceToBest)
             alphaVelocity = scalarMultiplyVelocity(alpha, differenceToBestWithEpsilon)
 
             epsilon2 = random.random()
             differenceToNeighbourhoodBest = subtractTours(neighbourHoodBest[1], swarm[a])
-            differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
+            differenceToNeighbourhoodBestWithEpsilon = epsilonRemove(epsilon2, differenceToNeighbourhoodBest)
             betaVelocity = scalarMultiplyVelocity(beta, differenceToNeighbourhoodBestWithEpsilon)
             
             velocities[a] = thetaVelocity + alphaVelocity + betaVelocity
@@ -439,7 +435,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
         # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
         # velocitiesToPlot.append(sum([len(v) for v in velocities])/swarmSize)
         # print(len([v for v in velocities if len(v) < 5]))
-        
+
 
 tour = PSO(swarmSize=swarmSize, theta = theta, alpha = alpha, beta = beta)
 tour_length = tourLength(tour)

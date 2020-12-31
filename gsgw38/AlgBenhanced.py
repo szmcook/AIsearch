@@ -297,7 +297,7 @@ def tourLength(tour):
     return tour_length
 
 
-def newTour(num_cities):
+def newTour(num_cities): # UNUSED - left in to demonstrate experimentation
     '''creates a random canonical tour of length num_cities'''
     tour = []
     for i in range(1, num_cities):
@@ -364,14 +364,20 @@ def scalarMultiplyVelocity(scalar, velocity):
     return new_velocity
 
 
-def productV(epsilon, velocity):
-    '''find the product of epsilon and the velocity'''
-    # this doesn't need to be a vector product.
-    # we use epsilon to point the vector in the proximity of the (best - current)
-    # we need a discrete equivalent.
-    # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha
-    # in this case the probability should be distributed so it's normally near 1
-    # you could also pick a random position swap and choose whether or not to delete it.
+def scalarMultiplyVelocityNewDiscretization(scalar, velocity):
+    '''multiplies the velocity by a scalar less than 1'''
+    vel = []
+    for i in range(len(velocity)):
+        # keep the ith pair with probability scalar
+        if random.random() < scalar:
+            vel.append(velocity[i])
+    return vel
+
+
+def epsilonRemove(epsilon, velocity): # UNUSED - left in to demonstrate experimentation
+    '''removes a random swap from the velocity'''
+    # we use epsilon to point the vector in the proximity of the (best - current) and we need a discrete equivalent.
+    # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha - in this case the probability should be distributed so it's normally near 1
     # this is a good choice for experimentation.
     if epsilon < 0.3 and len(velocity) > 1:
         index = random.randint(0, len(velocity)-1)
@@ -380,36 +386,18 @@ def productV(epsilon, velocity):
         return velocity
 
 
-def productVNewDiscretization(epsilon, velocity):
-    '''find the product of epsilon and the velocity'''
-    # this doesn't need to be a vector product.
-    # we use epsilon to point the vector in the proximity of the (best - current)
-    # we need a discrete equivalent.
-    # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha
-    # in this case the probability should be distributed so it's normally near 1
-    # you could also pick a random position swap and choose whether or not to delete it.
-    # this is a good choice for experimentation.
+def epsilonInsert(epsilon, velocity):
+    '''with probability 0.7 this adds a random swap'''
     if epsilon < 0.7 and len(velocity) > 1:
-        # print(f'velocityA: {velocity}')
         index = random.randint(0, len(velocity)-1)
         newSwap = ( random.randint(0, num_cities-1), random.randint(0, num_cities-1) )
         velocity.insert(index, newSwap)
-        # print(f'velocityB: {velocity}')
         return velocity
     else:
         return velocity
-
-
-def probabilityMultipleNewDiscretization(alpha, velocity):
-    vel = []
-    for i in range(len(velocity)):
-        # keep the ith pair with probability alpha
-        if random.random() < alpha:
-            vel.append(velocity[i])
-    return vel
     
 
-def subtractTours(tourA, tourB):
+def subtractTours(tourA, tourB): # UNUSED - left in to demonstrate experimentation
     '''uses bubble sort to obtain the velocity to go from tour1 to tour2'''
     swaps = []
     A = copy(tourA)
@@ -485,18 +473,18 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
                 return bestTour[1]
                 
             # UPDATE VELOCITY this is the slow bit
-            thetaVelocity = scalarMultiplyVelocity(theta, velocities[a])
+            thetaVelocity = scalarMultiplyVelocityNewDiscretization(theta, velocities[a])
             
             epsilon1 = random.random()
             differenceToBest = subtractToursNewDiscretization(pHat[a][1], swarm[a])
-            differenceToBestWithEpsilon = productVNewDiscretization(epsilon1, copy(differenceToBest))
-            alphaVelocity = scalarMultiplyVelocity(alpha, differenceToBestWithEpsilon)
+            differenceToBestWithEpsilon = epsilonInsert(epsilon1, copy(differenceToBest))
+            alphaVelocity = scalarMultiplyVelocityNewDiscretization(alpha, differenceToBestWithEpsilon)
             # for the alternate discretization
             # alphaVelocity = probabilityMultipleNewDiscretization(epsilon1, differenceToBest)
 
             epsilon2 = random.random()
             differenceToNeighbourhoodBest = subtractToursNewDiscretization(neighbourHoodBest[1], swarm[a])
-            differenceToNeighbourhoodBestWithEpsilon = productVNewDiscretization(epsilon2, copy(differenceToNeighbourhoodBest))
+            differenceToNeighbourhoodBestWithEpsilon = epsilonInsert(epsilon2, copy(differenceToNeighbourhoodBest))
             betaVelocity = scalarMultiplyVelocity(beta, differenceToNeighbourhoodBestWithEpsilon)
             # for the alternate discretization
             # betaVelocity = probabilityMultipleNewDiscretization(epsilon2, differenceToNeighbourhoodBest)
