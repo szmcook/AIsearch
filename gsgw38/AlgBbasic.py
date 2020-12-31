@@ -278,8 +278,8 @@ added_note = ""
 # SETTING PARAMETERS
 swarmSize = 20
 theta = 0.6
-alpha = 0.5
-beta = 3.0
+alpha = 0.75
+beta = 2.5
 
 # IMPORTS
 import random
@@ -343,11 +343,6 @@ def scalarMultiplyVelocity(scalar, velocity):
     return new_velocity
 
 
-# def addVelocities(velocity1, velocity2):
-#     '''create a linear combination of the three velocities'''
-#     return velocity1 + velocity2
-
-
 def productV(epsilon, velocity):
     '''find the product of epsilon and the velocity'''
     # this doesn't need to be a vector product.
@@ -378,6 +373,8 @@ def subtractTours(tourA, tourB):
 
 # global toursToPlot
 # toursToPlot = []
+# global velocitiesToPlot
+# velocitiesToPlot = []
 
 def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     swarm = []      # current state of each tour, swarm[i] is the ith tour
@@ -407,12 +404,18 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             currentLength = tourLength(swarm[a])
             if currentLength < pHat[a][0]:
                 pHat[a] = copy((currentLength, swarm[a]))
+
+            # UPDATE BEST TOUR
+            if pHat[a][0] < bestTour[0]:
+                bestTour = copy(pHat[a])
                 
             # TERMINATION CONDITION
             if (datetime.now() - start > timedelta(seconds=50)):
                 # import matplotlib.pyplot as plt
                 # plt.plot(toursToPlot)
-                # plt.show()
+                # plt.savefig(f'basicTours_{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
+                # plt.plot(velocitiesToPlot)
+                # plt.savefig(f'basicVels{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
                 return bestTour[1]
                 
             # UPDATE VELOCITY this is the slow bit
@@ -430,14 +433,12 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             
             velocities[a] = thetaVelocity + alphaVelocity + betaVelocity
             
-            # UPDATE BEST TOUR
-            if pHat[a][0] < bestTour[0]:
-                bestTour = copy(pHat[a])
-       
         t = t+1
 
         # plotting
-       # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
+        # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
+        # velocitiesToPlot.append(sum([len(v) for v in velocities])/swarmSize)
+        # print(len([v for v in velocities if len(v) < 5]))
         
 
 tour = PSO(swarmSize=swarmSize, theta = theta, alpha = alpha, beta = beta)
