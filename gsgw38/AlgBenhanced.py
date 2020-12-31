@@ -477,7 +477,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
                 
             # TERMINATION CONDITION
             if (datetime.now() - start > timedelta(seconds=50)):
-                import matplotlib.pyplot as plt
+                # import matplotlib.pyplot as plt
                 # plt.plot(toursToPlot)
                 # plt.savefig(f'enhancedTours_{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
                 # plt.plot(velocitiesToPlot)
@@ -510,7 +510,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
         # plotting
         # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
         # velocitiesToPlot.append(sum([len(v) for v in velocities])/swarmSize)
-        print(len([v for v in velocities if len(v) < 5]))
+        # print(len([v for v in velocities if len(v) < 5]))
         
     
 tour = PSO(swarmSize=swarmSize, theta = theta, alpha = alpha, beta = beta)
