@@ -295,7 +295,7 @@ def tourLength(tour):
     return tour_length
 
     
-def newTour(num_cities):
+def newTour(num_cities): # UNUSED - left in to demonstrate experimentation
     '''creates a random tour of length num_cities'''
     tour = []
     for i in range(num_cities):
@@ -317,7 +317,7 @@ def newTourNN(num_cities):
         citiesNotInTour.remove(closestCity)
     return tour
 
-def primsMST(num_cities):
+def primsMST(num_cities): # UNUSED - left in to demonstrate experimentation
     '''produces an MST for the city set using prim's algorithm'''
     startCity = random.randint(0, num_cities)
 
@@ -337,9 +337,9 @@ def primsMST(num_cities):
         unvisited.remove(closestCityToMST)
     return visited
 
-def reproduce(parentX, parentY):
+
+def reproduceUnused(parentX, parentY): # UNUSED - left in to demonstrate experimentation
     '''makes a child from parentX and parentY'''
-    # TODO try and make this faster
     partition = random.randint(0,num_cities)
     partFromX = parentX[0:partition]
     partFromY = parentY[partition:num_cities]
@@ -354,22 +354,18 @@ def reproduce(parentX, parentY):
     return child
 
 
-def reproduce2(parentX, parentY):
+def reproduce(parentX, parentY):
     '''makes a child from parentX and parentY'''
     # TODO try and make this faster
-    print(f'x is \n{parentX}\ny is \n{parentY}')
     partition = random.randint(0,num_cities)
-    partFromX = parentX[0:partition]
-    print(f'partFromX is {partFromX}')
-    for i in partFromX:
-        parentY.remove(i)
-    print(f'parentY has become {parentY}')
-    child = partFromX+parentY
-    print(f'child is \n{child}')
+    child = parentX[0:partition]
+    for i in parentY:
+        if i not in child:
+            child.append(i)
     return child
 
 
-def mutateChildOld(child, pMutation):
+def mutateChildUnused(child, pMutation): # UNUSED - left in to demonstrate experimentation
     '''if a random float is lesser than the threshold swap two nodes in the child'''
     if random.random() <= pMutation:
         # pick two indices
@@ -397,7 +393,7 @@ def mutateChild(child, pMutation):
         return child
 
 
-def chooseParentOld(population):
+def chooseParentUnused(population): # UNUSED - left in to demonstrate experimentation
     '''given a population this function picks a parent based on its fitness'''
     # store all the fitnesses in an array
     fitnesses = []

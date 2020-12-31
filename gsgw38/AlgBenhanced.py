@@ -432,7 +432,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     velocities = [] # array of the current velocities, represented as arrays of tuples (swaps)
     for _ in range(swarmSize):
         # at random generate a new tour or a new nearest neighbours tour
-        if random.random() < 0.9:
+        if random.random() < 0.6:
             new_tour = newTourNN(num_cities)
         else:
             new_tour = newTourNewDiscretization(num_cities)
