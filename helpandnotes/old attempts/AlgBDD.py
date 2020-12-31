@@ -310,8 +310,8 @@ def newTour(num_cities):
     return tour
 
 
-def newTourNew(num_cities):
-    '''creates a random canonical tour of length num_cities'''
+def newTourNewDiscretization(num_cities):
+    '''creates a random tour of length num_cities'''
     tour = []
     for i in range(0, num_cities):
         tour.append(i)
@@ -372,7 +372,7 @@ def productV(epsilon, velocity):
         return velocity
 
 
-def productVNew(epsilon, velocity):
+def productVNewDiscretization(epsilon, velocity):
     '''find the product of epsilon and the velocity'''
     # this doesn't need to be a vector product.
     # we use epsilon to point the vector in the proximity of the (best - current)
@@ -404,7 +404,7 @@ def subtractTours(tourA, tourB):
     return swaps
 
 
-def subtractToursNew(tourA, tourB):
+def subtractToursNewDiscretization(tourA, tourB):
     '''obtains a velocity to go from tour1 to tour2'''
     swaps = []
     A = copy(tourA)
@@ -424,7 +424,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     pHat = []       # tuples of the best length and the respective state for each tour
     velocities = [] # array of the current velocities, represented as arrays of tuples (swaps)
     for _ in range(swarmSize):
-        new_tour = newTourNew(num_cities)
+        new_tour = newTourNewDiscretization(num_cities)
         swarm.append(copy(new_tour))
         pHat.append( (tourLength(new_tour), copy(new_tour)) )
         velocities.append(randomVelocity())
@@ -441,7 +441,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             # UPDATE TOUR
             oldSwarmAPosition = copy(swarm[a])
             swarm[a] = applyVelocity(oldSwarmAPosition, velocities[a])
-            velocities[a] = subtractToursNew(swarm[a], oldSwarmAPosition)
+            velocities[a] = subtractToursNewDiscretization(swarm[a], oldSwarmAPosition)
             
             # UPDATE pHat IF NECESSARY
             currentLength = tourLength(swarm[a])
@@ -459,13 +459,13 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             thetaVelocity = scalarMultiplyVelocity(theta, velocities[a])
             
             epsilon1 = random.random()
-            differenceToBest = subtractToursNew(pHat[a][1], swarm[a])
-            differenceToBestWithEpsilon = productVNew(epsilon1, differenceToBest)
+            differenceToBest = subtractToursNewDiscretization(pHat[a][1], swarm[a])
+            differenceToBestWithEpsilon = productVNewDiscretization(epsilon1, differenceToBest)
             alphaVelocity = scalarMultiplyVelocity(alpha, differenceToBestWithEpsilon)
 
             epsilon2 = random.random()
-            differenceToNeighbourhoodBest = subtractToursNew(neighbourHoodBest[1], swarm[a])
-            differenceToNeighbourhoodBestWithEpsilon = productVNew(epsilon2, differenceToNeighbourhoodBest)
+            differenceToNeighbourhoodBest = subtractToursNewDiscretization(neighbourHoodBest[1], swarm[a])
+            differenceToNeighbourhoodBestWithEpsilon = productVNewDiscretization(epsilon2, differenceToNeighbourhoodBest)
             betaVelocity = scalarMultiplyVelocity(beta, differenceToNeighbourhoodBestWithEpsilon)
             
             velocities[a] = thetaVelocity + alphaVelocity + betaVelocity

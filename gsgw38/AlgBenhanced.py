@@ -309,6 +309,15 @@ def newTour(num_cities):
     return tour
 
 
+def newTourNewDiscretization(num_cities):
+    '''creates a random tour of length num_cities'''
+    tour = []
+    for i in range(0, num_cities):
+        tour.append(i)
+    random.shuffle(tour)
+    return tour
+
+
 def newTourNN(num_cities):
     startCity = random.randint(0, num_cities-1)
     tour = [startCity]
@@ -374,6 +383,35 @@ def productV(epsilon, velocity):
         return velocity[:index] + velocity[index+1:]
     else:
         return velocity
+
+
+def productVNewDiscretization(epsilon, velocity):
+    '''find the product of epsilon and the velocity'''
+    # this doesn't need to be a vector product.
+    # we use epsilon to point the vector in the proximity of the (best - current)
+    # we need a discrete equivalent.
+    # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha
+    # in this case the probability should be distributed so it's normally near 1
+    # you could also pick a random position swap and choose whether or not to delete it.
+    # this is a good choice for experimentation.
+    if epsilon < 0.7 and len(velocity) > 1:
+        # print(f'velocityA: {velocity}')
+        index = random.randint(0, len(velocity)-1)
+        newSwap = ( random.randint(0, num_cities-1), random.randint(0, num_cities-1) )
+        velocity.insert(index, newSwap)
+        # print(f'velocityB: {velocity}')
+        return velocity
+    else:
+        return velocity
+
+
+def probabilityMultipleNewDiscretization(alpha, velocity):
+    vel = []
+    for i in range(len(velocity)):
+        # keep the ith pair with probability alpha
+        if random.random() < alpha:
+            vel.append(velocity[i])
+    return vel
     
 
 def subtractTours(tourA, tourB):
@@ -388,8 +426,20 @@ def subtractTours(tourA, tourB):
     return swaps
 
 
-# global toursToPlot
-# toursToPlot = []
+def subtractToursNewDiscretization(tourA, tourB):
+    '''obtains a velocity to go from tour1 to tour2'''
+    swaps = []
+    A = copy(tourA)
+    for i in range(num_cities-1):
+        if (A[i] != tourB[i]):
+            j = A.index(tourB[i])
+            A[i], A[j] = A[j], A[i]
+            swaps.append( (i,j) )    
+    return swaps
+
+
+global toursToPlot
+toursToPlot = []
 
 def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     swarm = []      # current state of each tour, swarm[i] is the ith tour
@@ -400,7 +450,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
         if random.random() < 0.9:
             new_tour = newTourNN(num_cities)
         else:
-            new_tour = newTour(num_cities)
+            new_tour = newTourNewDiscretization(num_cities)
         swarm.append(copy(new_tour))
         pHat.append( (tourLength(new_tour), copy(new_tour)) )
         velocities.append(randomVelocity())
@@ -417,7 +467,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             # UPDATE TOUR
             oldSwarmAPosition = copy(swarm[a])
             swarm[a] = applyVelocity(oldSwarmAPosition, velocities[a])
-            velocities[a] = subtractTours(swarm[a], oldSwarmAPosition)
+            velocities[a] = subtractToursNewDiscretization(swarm[a], oldSwarmAPosition)
             
             # UPDATE pHat IF NECESSARY
             currentLength = tourLength(swarm[a])
@@ -426,8 +476,9 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
                 
             # TERMINATION CONDITION
             if (datetime.now() - start > timedelta(seconds=50)):
-                # import matplotlib.pyplot as plt
-                # plt.plot(toursToPlot)
+                import matplotlib.pyplot as plt
+                plt.plot(toursToPlot)
+                plt.savefig(f'Graph_Benhanced_{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
                 # plt.show()
                 return bestTour[1]
                 
@@ -435,17 +486,23 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             thetaVelocity = scalarMultiplyVelocity(theta, velocities[a])
             
             epsilon1 = random.random()
-            differenceToBest = subtractTours(pHat[a][1], swarm[a])
-            differenceToBestWithEpsilon = productV(epsilon1, differenceToBest)
+            differenceToBest = subtractToursNewDiscretization(pHat[a][1], swarm[a])
+            differenceToBestWithEpsilon = productVNewDiscretization(epsilon1, copy(differenceToBest))
             alphaVelocity = scalarMultiplyVelocity(alpha, differenceToBestWithEpsilon)
+            # for the alternate discretization
+            # alphaVelocity = probabilityMultipleNewDiscretization(epsilon1, differenceToBest)
 
             epsilon2 = random.random()
-            differenceToNeighbourhoodBest = subtractTours(neighbourHoodBest[1], swarm[a])
-            differenceToNeighbourhoodBestWithEpsilon = productV(epsilon2, differenceToNeighbourhoodBest)
+            differenceToNeighbourhoodBest = subtractToursNewDiscretization(neighbourHoodBest[1], swarm[a])
+            differenceToNeighbourhoodBestWithEpsilon = productVNewDiscretization(epsilon2, copy(differenceToNeighbourhoodBest))
             betaVelocity = scalarMultiplyVelocity(beta, differenceToNeighbourhoodBestWithEpsilon)
-            
+            # for the alternate discretization
+            # betaVelocity = probabilityMultipleNewDiscretization(epsilon2, differenceToNeighbourhoodBest)
+
             velocities[a] = thetaVelocity + alphaVelocity + betaVelocity
-            
+            # for the alternate discretization
+            # velocities[a] = velocities[a] + alphaVelocity + betaVelocity
+
             # UPDATE BEST TOUR
             if pHat[a][0] < bestTour[0]:
                 bestTour = copy(pHat[a])
@@ -453,7 +510,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
         t = t+1
 
         # plotting
-        # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
+        toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
         
     
 tour = PSO(swarmSize=swarmSize, theta = theta, alpha = alpha, beta = beta)
