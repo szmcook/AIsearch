@@ -12,6 +12,7 @@ import os
 import sys
 import time
 import random
+from datetime import datetime, timedelta
 
 ############
 ############ NOW PLEASE SCROLL DOWN UNTIL THE NEXT BLOCK OF CAPITALIZED COMMENTS.
@@ -74,25 +75,25 @@ def build_distance_matrix(num_cities, distances, city_format):
     if city_format == "full":
         for j in range(num_cities):
             row = []
-            for _ in range(0, num_cities):
+            for k in range(0, num_cities):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     elif city_format == "upper_tri":
         for j in range(0, num_cities):
             row = []
-            for _ in range(j):
+            for k in range(j):
                 row.append(0)
-            for _ in range(num_cities - j):
+            for k in range(num_cities - j):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     else:
         for j in range(0, num_cities):
             row = []
-            for _ in range(j + 1):
+            for k in range(j + 1):
                 row.append(0)
-            for _ in range(0, num_cities - (j + 1)):
+            for k in range(0, num_cities - (j + 1)):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
@@ -240,7 +241,7 @@ my_user_name = "gsgw38"
 ############ ARE SET AT SOMETHING).
 ############
 
-my_first_name = "Sam"
+my_first_name = "Samuel"
 my_last_name = "Cook"
 
 ############
@@ -268,22 +269,19 @@ print("   your algorithm code is legal and is " + algorithm_code + " -" + code_d
 ############ YOUR TOUR THAT YOU MIGHT BE INTERESTED IN LATER.
 ############
 
-added_note = "This is the result from the genetic algorithm with population 12 and mutation chance 0.05"
+added_note = ""
 
 ############
 ############ NOW YOUR CODE SHOULD BEGIN.
 ############
 
-# tour should contain a list of integers from 0 to n-1 representing the order the cities should be visited
+
 
 # SETTING PARAMETERS
 populationSize = 100 # the size of the population in each generation
 pMutation = 0.1 # the probability of mutation in a child
 elitePercentage = 0.1 # the parameter for the elitism part (not present in the basic implementation)
 
-# IMPORTS
-import random # this is imported at the top and is probably unnecessary
-from datetime import datetime, timedelta
 
 # HELPFUL FUNCTIONS
 def tourLength(tour):

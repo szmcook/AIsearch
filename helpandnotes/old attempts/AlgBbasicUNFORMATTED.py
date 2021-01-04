@@ -12,8 +12,6 @@ import os
 import sys
 import time
 import random
-from copy import copy
-from datetime import datetime, timedelta
 
 ############
 ############ NOW PLEASE SCROLL DOWN UNTIL THE NEXT BLOCK OF CAPITALIZED COMMENTS.
@@ -76,25 +74,25 @@ def build_distance_matrix(num_cities, distances, city_format):
     if city_format == "full":
         for j in range(num_cities):
             row = []
-            for k in range(0, num_cities):
+            for _ in range(0, num_cities):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     elif city_format == "upper_tri":
         for j in range(0, num_cities):
             row = []
-            for k in range(j):
+            for _ in range(j):
                 row.append(0)
-            for k in range(num_cities - j):
+            for _ in range(num_cities - j):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     else:
         for j in range(0, num_cities):
             row = []
-            for k in range(j + 1):
+            for _ in range(j + 1):
                 row.append(0)
-            for k in range(0, num_cities - (j + 1)):
+            for _ in range(0, num_cities - (j + 1)):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
@@ -242,7 +240,7 @@ my_user_name = "gsgw38"
 ############ ARE SET AT SOMETHING).
 ############
 
-my_first_name = "Samuel"
+my_first_name = "Sam"
 my_last_name = "Cook"
 
 ############
@@ -276,12 +274,18 @@ added_note = ""
 ############ NOW YOUR CODE SHOULD BEGIN.
 ############
 
+    
 # SETTING PARAMETERS
 swarmSize = 20
 theta = 0.6
 alpha = 0.75
 beta = 2.5
 
+# IMPORTS
+import random
+# random.seed(1)
+from copy import copy
+from datetime import datetime, timedelta
 
 # HELPER FUNCTIONS
 
@@ -294,7 +298,7 @@ def tourLength(tour):
     return tour_length
 
 
-def newTour(num_cities): # UNUSED - left in to demonstrate experimentation
+def newTour(num_cities):
     '''creates a random canonical tour of length num_cities'''
     tour = []
     for i in range(1, num_cities):
@@ -303,28 +307,6 @@ def newTour(num_cities): # UNUSED - left in to demonstrate experimentation
     tour.insert(0,0)
     if tour[1] > tour[-1]:
         tour[1], tour[-1] = tour[-1], tour[1]
-    return tour
-
-
-def newTourNewDiscretization(num_cities):
-    '''creates a random tour of length num_cities'''
-    tour = []
-    for i in range(0, num_cities):
-        tour.append(i)
-    random.shuffle(tour)
-    return tour
-
-
-def newTourNN(num_cities):
-    startCity = random.randint(0, num_cities-1)
-    tour = [startCity]
-    citiesNotInTour = set({city for city in range(num_cities)} - {startCity})
-    while len(tour) < num_cities:
-        # find the nearest neighbour to the end city, add it to the tour and remove it from citiesNotInTour
-        endCity = tour[-1]
-        closestCity = min(citiesNotInTour, key=lambda c: dist_matrix[endCity][c])
-        tour.append(closestCity)
-        citiesNotInTour.remove(closestCity)
     return tour
 
 
@@ -361,17 +343,7 @@ def scalarMultiplyVelocity(scalar, velocity):
     return new_velocity
 
 
-def scalarMultiplyVelocityNewDiscretization(scalar, velocity):
-    '''multiplies the velocity by a scalar less than 1'''
-    vel = []
-    for i in range(len(velocity)):
-        # keep the ith pair with probability scalar
-        if random.random() < scalar:
-            vel.append(velocity[i])
-    return vel
-
-
-def epsilonRemove(epsilon, velocity): # UNUSED - left in to demonstrate experimentation
+def epsilonRemove(epsilon, velocity):
     '''removes a random swap from the velocity'''
     # we use epsilon to point the vector in the proximity of the (best - current) and we need a discrete equivalent.
     # the easiest is to randomly generate an epsilon between 0 and 1 and multiply it with alpha - in this case the probability should be distributed so it's normally near 1
@@ -381,20 +353,9 @@ def epsilonRemove(epsilon, velocity): # UNUSED - left in to demonstrate experime
         return velocity[:index] + velocity[index+1:]
     else:
         return velocity
-
-
-def epsilonInsert(epsilon, velocity):
-    '''with probability 0.7 this adds a random swap'''
-    if epsilon < 0.7 and len(velocity) > 1:
-        index = random.randint(0, len(velocity)-1)
-        newSwap = ( random.randint(0, num_cities-1), random.randint(0, num_cities-1) )
-        velocity.insert(index, newSwap)
-        return velocity
-    else:
-        return velocity
     
 
-def subtractTours(tourA, tourB): # UNUSED - left in to demonstrate experimentation
+def subtractTours(tourA, tourB):
     '''uses bubble sort to obtain the velocity to go from tour1 to tour2'''
     swaps = []
     A = copy(tourA)
@@ -403,18 +364,6 @@ def subtractTours(tourA, tourB): # UNUSED - left in to demonstrate experimentati
             if tourB.index(A[j]) > tourB.index(A[j+1]):
                 A[j], A[j+1] = A[j+1], A[j]
                 swaps.append((j,j+1))
-    return swaps
-
-
-def subtractToursNewDiscretization(tourA, tourB):
-    '''obtains a velocity to go from tour1 to tour2'''
-    swaps = []
-    A = copy(tourA)
-    for i in range(num_cities-1):
-        if (A[i] != tourB[i]):
-            j = A.index(tourB[i])
-            A[i], A[j] = A[j], A[i]
-            swaps.append( (i,j) )    
     return swaps
 
 
@@ -428,11 +377,7 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     pHat = []       # tuples of the best length and the respective state for each tour
     velocities = [] # array of the current velocities, represented as arrays of tuples (swaps)
     for _ in range(swarmSize):
-        # at random generate a new tour or a new nearest neighbours tour
-        if random.random() < 0.6:
-            new_tour = newTourNN(num_cities)
-        else:
-            new_tour = newTourNewDiscretization(num_cities)
+        new_tour = newTour(num_cities)
         swarm.append(copy(new_tour))
         pHat.append( (tourLength(new_tour), copy(new_tour)) )
         velocities.append(randomVelocity())
@@ -443,13 +388,13 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     start = datetime.now()
     while True:
         for a in range(swarmSize):
-            # UPDATE NEIGHBOURHOOD
+            # UPDATE NEIGHBOURHOOD TODO assess whether this is a spot where we can improve the quality of the tours
             neighbourHoodBest = bestTour
 
             # UPDATE TOUR
             oldSwarmAPosition = copy(swarm[a])
             swarm[a] = applyVelocity(oldSwarmAPosition, velocities[a])
-            velocities[a] = subtractToursNewDiscretization(swarm[a], oldSwarmAPosition)
+            velocities[a] = subtractTours(swarm[a], oldSwarmAPosition)
             
             # UPDATE pHat IF NECESSARY
             currentLength = tourLength(swarm[a])
@@ -464,40 +409,34 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
             if (datetime.now() - start > timedelta(seconds=50)):
                 # import matplotlib.pyplot as plt
                 # plt.plot(toursToPlot)
-                # plt.savefig(f'enhancedTours_{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
+                # plt.savefig(f'basicTours_{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
                 # plt.plot(velocitiesToPlot)
-                # plt.savefig(f'enhancedVels_{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
+                # plt.savefig(f'basicVels{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
                 return bestTour[1]
                 
             # UPDATE VELOCITY this is the slow bit
-            thetaVelocity = scalarMultiplyVelocityNewDiscretization(theta, velocities[a])
+            thetaVelocity = scalarMultiplyVelocity(theta, velocities[a])
             
             epsilon1 = random.random()
-            differenceToBest = subtractToursNewDiscretization(pHat[a][1], swarm[a])
-            differenceToBestWithEpsilon = epsilonInsert(epsilon1, copy(differenceToBest))
-            alphaVelocity = scalarMultiplyVelocityNewDiscretization(alpha, differenceToBestWithEpsilon)
-            # for the alternate discretization
-            # alphaVelocity = probabilityMultipleNewDiscretization(epsilon1, differenceToBest)
+            differenceToBest = subtractTours(pHat[a][1], swarm[a])
+            differenceToBestWithEpsilon = epsilonRemove(epsilon1, differenceToBest)
+            alphaVelocity = scalarMultiplyVelocity(alpha, differenceToBestWithEpsilon)
 
             epsilon2 = random.random()
-            differenceToNeighbourhoodBest = subtractToursNewDiscretization(neighbourHoodBest[1], swarm[a])
-            differenceToNeighbourhoodBestWithEpsilon = epsilonInsert(epsilon2, copy(differenceToNeighbourhoodBest))
+            differenceToNeighbourhoodBest = subtractTours(neighbourHoodBest[1], swarm[a])
+            differenceToNeighbourhoodBestWithEpsilon = epsilonRemove(epsilon2, differenceToNeighbourhoodBest)
             betaVelocity = scalarMultiplyVelocity(beta, differenceToNeighbourhoodBestWithEpsilon)
-            # for the alternate discretization
-            # betaVelocity = probabilityMultipleNewDiscretization(epsilon2, differenceToNeighbourhoodBest)
-
+            
             velocities[a] = thetaVelocity + alphaVelocity + betaVelocity
-            # for the alternate discretization
-            # velocities[a] = velocities[a] + alphaVelocity + betaVelocity            
-       
+            
         t = t+1
 
         # plotting
         # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
         # velocitiesToPlot.append(sum([len(v) for v in velocities])/swarmSize)
         # print(len([v for v in velocities if len(v) < 5]))
-        
-    
+
+
 tour = PSO(swarmSize=swarmSize, theta = theta, alpha = alpha, beta = beta)
 tour_length = tourLength(tour)
 added_note = f"This is the result from the particle swarm optimisation algorithm with swarm size {swarmSize}, theta={theta} ,alpha={alpha}, beta={beta}"

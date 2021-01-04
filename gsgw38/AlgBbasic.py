@@ -12,6 +12,8 @@ import os
 import sys
 import time
 import random
+from copy import copy
+from datetime import datetime, timedelta
 
 ############
 ############ NOW PLEASE SCROLL DOWN UNTIL THE NEXT BLOCK OF CAPITALIZED COMMENTS.
@@ -74,25 +76,25 @@ def build_distance_matrix(num_cities, distances, city_format):
     if city_format == "full":
         for j in range(num_cities):
             row = []
-            for _ in range(0, num_cities):
+            for k in range(0, num_cities):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     elif city_format == "upper_tri":
         for j in range(0, num_cities):
             row = []
-            for _ in range(j):
+            for k in range(j):
                 row.append(0)
-            for _ in range(num_cities - j):
+            for k in range(num_cities - j):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
     else:
         for j in range(0, num_cities):
             row = []
-            for _ in range(j + 1):
+            for k in range(j + 1):
                 row.append(0)
-            for _ in range(0, num_cities - (j + 1)):
+            for k in range(0, num_cities - (j + 1)):
                 row.append(distances[i])
                 i = i + 1
             dist_matrix.append(row)
@@ -240,7 +242,7 @@ my_user_name = "gsgw38"
 ############ ARE SET AT SOMETHING).
 ############
 
-my_first_name = "Sam"
+my_first_name = "Samuel"
 my_last_name = "Cook"
 
 ############
@@ -274,18 +276,13 @@ added_note = ""
 ############ NOW YOUR CODE SHOULD BEGIN.
 ############
 
-    
+
 # SETTING PARAMETERS
 swarmSize = 20
 theta = 0.6
 alpha = 0.75
 beta = 2.5
 
-# IMPORTS
-import random
-# random.seed(1)
-from copy import copy
-from datetime import datetime, timedelta
 
 # HELPER FUNCTIONS
 
