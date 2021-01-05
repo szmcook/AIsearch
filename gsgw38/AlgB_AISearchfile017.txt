@@ -1,4 +1,4 @@
-USER = gsgw38 (Sam Cook),
+USER = gsgw38 (Samuel Cook),
 ALGORITHM CODE = PS, NAME OF CITY-FILE = AISearchfile017.txt,
 SIZE = 17, TOUR LENGTH = 1543,
 0,8,4,11,1,15,2,5,13,10,3,16,9,14,12,6,7,
