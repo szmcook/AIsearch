@@ -445,7 +445,7 @@ def genetic(populationSize, pMutation, elitePercentage):
         bestOne = newPopulation[0]
 
         # terminate after about 50 seconds
-        if (datetime.now() - start > timedelta(seconds=3*60*60)):
+        if (datetime.now() - start > timedelta(seconds=50)):
             return bestOne
 
         # fill up the new population
