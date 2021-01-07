@@ -307,6 +307,15 @@ def newTour(num_cities):
     return tour
 
 
+def canonicalForm(tour):
+    '''takes a tour and returns the canonical form'''
+    i = tour.index(0)
+    tour=tour[i:]+tour[:i]
+    if tour[1] > tour[-1]:
+        tour[1], tour[-1] = tour[-1], tour[1]
+    return tour
+
+
 def randomVelocity():
     '''produces a random sequence of at most num_cities swaps'''
     numberOfSwaps = random.randint(0, num_cities)
@@ -322,7 +331,8 @@ def applyVelocity(tour, velocity):
     newTour = copy(tour)
     for pair in velocity:
         newTour[pair[0]], newTour[pair[1]] = newTour[pair[1]], newTour[pair[0]]
-    # FIXME should this then put the tour back into canonical form? doesn't seem necessary but might be required if it don't work
+    # TODO experiment with canonical form
+    # newTour = canonicalForm(tour)
     return newTour
 
 

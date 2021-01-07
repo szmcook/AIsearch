@@ -328,6 +328,14 @@ def newTourNN(num_cities):
     return tour
 
 
+def canonicalForm(tour):
+    i = tour.index(0)
+    tour=tour[i:]+tour[:i]
+    if tour[1] > tour[-1]:
+        tour[1], tour[-1] = tour[-1], tour[1]
+    return tour
+
+
 def randomVelocity():
     '''produces a random sequence of at most num_cities swaps'''
     numberOfSwaps = random.randint(0, num_cities)
