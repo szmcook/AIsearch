@@ -39,9 +39,9 @@ lengths of successfully validated tours given below go to form your tour-quality
 #####      - AlgA_AISearchfile042.txt: a good tour of length 1188 (genetic algorithm)
 #####      - AlgA_AISearchfile048.txt: a good tour of length 12185 (genetic algorithm)
 #####      - AlgA_AISearchfile058.txt: a good tour of length 25395 (genetic algorithm)
-#####      - AlgA_AISearchfile175.txt: a good tour of length 21658 (genetic algorithm)
-#####      - AlgA_AISearchfile180.txt: a good tour of length 1960 (genetic algorithm)
-#####      - AlgA_AISearchfile535.txt: a good tour of length 49987 (genetic algorithm)
+#####      - AlgA_AISearchfile175.txt: a good tour of length 21478 (genetic algorithm)
+#####      - AlgA_AISearchfile180.txt: a good tour of length 1950 (genetic algorithm)
+#####      - AlgA_AISearchfile535.txt: a good tour of length 48895 (genetic algorithm)
 #####   * program cluster AlgB:
 #####      - AlgB_AISearchfile012.txt: a good tour of length 56 (particle swarm optimization)
 #####      - AlgB_AISearchfile017.txt: a good tour of length 1543 (particle swarm optimization)
@@ -58,5 +58,5 @@ The next part of this feedback simply states whether or not the proforma was sub
 no enhancement marks will be awarded without a proforma.
 
 #####  Additional items submission
-#####   * AISearchProforma.pdf: not submitted
+#####   * AISearchProforma.pdf: submitted
 
