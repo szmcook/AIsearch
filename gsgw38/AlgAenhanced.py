@@ -417,6 +417,8 @@ def chooseParent(toursAndLengthsArray):
     parent = parentTourAndLength[0][0]
     return parent
     
+# global toursToPlot
+# toursToPlot = []
 
 # GENETIC ALGORITHM
 def genetic(populationSize, pMutation, elitePercentage):
@@ -446,6 +448,9 @@ def genetic(populationSize, pMutation, elitePercentage):
 
         # terminate after about 50 seconds
         if (datetime.now() - start > timedelta(seconds=50)):
+            # import matplotlib.pyplot as plt
+            # plt.plot(toursToPlot)
+            # plt.savefig(f'AlgAenhancedTours_{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
             return bestOne
 
         # fill up the new population
@@ -463,6 +468,8 @@ def genetic(populationSize, pMutation, elitePercentage):
             pMutation += 0.001
         
         population = newPopulation.copy()
+        # plotting
+        # toursToPlot.append((toursAndLengthsArray[0][1], sum([ele[1] for ele in toursAndLengthsArray])//populationSize))
         
 
 # generate the tour and find its length

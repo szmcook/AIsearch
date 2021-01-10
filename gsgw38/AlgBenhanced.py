@@ -428,8 +428,6 @@ def subtractToursNewDiscretization(tourA, tourB):
 
 # global toursToPlot
 # toursToPlot = []
-# global velocitiesToPlot
-# velocitiesToPlot = []
 
 def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
     swarm = []      # current state of each tour, swarm[i] is the ith tour
@@ -473,8 +471,6 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
                 # import matplotlib.pyplot as plt
                 # plt.plot(toursToPlot)
                 # plt.savefig(f'enhancedTours_{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
-                # plt.plot(velocitiesToPlot)
-                # plt.savefig(f'enhancedVels_{num_cities}_{datetime.now().hour}:{datetime.now().minute}')
                 return bestTour[1]
                 
             # UPDATE VELOCITY this is the slow bit
@@ -502,7 +498,6 @@ def PSO(swarmSize, theta = 1, alpha = 1, beta = 1):
 
         # plotting
         # toursToPlot.append((bestTour[0], sum([tourLength(tour) for tour in swarm])//swarmSize))
-        # velocitiesToPlot.append(sum([len(v) for v in velocities])/swarmSize)
         # print(len([v for v in velocities if len(v) < 5]))
         
     
