@@ -52,7 +52,7 @@ lengths of successfully validated tours given below go to form your tour-quality
 #####      - AlgB_AISearchfile058.txt: a good tour of length 27384 (particle swarm optimization)
 #####      - AlgB_AISearchfile175.txt: a good tour of length 21944 (particle swarm optimization)
 #####      - AlgB_AISearchfile180.txt: a good tour of length 5420 (particle swarm optimization)
-#####      - AlgB_AISearchfile535.txt: a good tour of length 50170 (particle swarm optimization)
+#####      - AlgB_AISearchfile535.txt: a good tour of length 50103 (particle swarm optimization)
 
 The next part of this feedback simply states whether or not the proforma was submitted. There is no penalty for not submitting the proforma but
 no enhancement marks will be awarded without a proforma.
